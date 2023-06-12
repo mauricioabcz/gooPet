@@ -74,7 +74,7 @@ public class DatabaseManager {
     }
 
     
-    public void createUser(String nome, String email, String password, String userTypeName) throws InvalidKeySpecException, Exception {
+    public void createUser(String nome, String email, String passwordHash, String userTypeName) throws InvalidKeySpecException, Exception {
         emf = Persistence.createEntityManagerFactory("myPU");
         EntityManager em = emf.createEntityManager();
 
@@ -97,10 +97,6 @@ public class DatabaseManager {
             UUID userTypeId = (UUID) typeQuery.getSingleResult();
             UserType userType = em.find(UserType.class, userTypeId);
             
-            // Calcular o hash da senha
-            Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Criando criptografia da senha.");
-            String passwordHash = security.encryptPassword(password);
-
             // Criar o objeto User e persistir no banco de dados
             User user = new User(nome, email, passwordHash, userType, new Date());
             em.getTransaction().begin();
@@ -109,6 +105,70 @@ public class DatabaseManager {
             Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Usuário criado com sucesso: " + user.toString());
         } finally {
             em.close();
+        }
+    }
+    
+    public void updateUser(User user) {
+        Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Alterando User existente.");
+        emf = Persistence.createEntityManagerFactory("myPU");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        
+        try {
+            emf = Persistence.createEntityManagerFactory("myPU");
+            em = emf.createEntityManager();
+            tx = em.getTransaction();
+            tx.begin();
+
+            // Atualizar o grupo de usuário na tabela
+            em.merge(user);
+
+            tx.commit();
+            Log.LogAuthenticationComponent("DatabaseManager", "INFO", "User alterado com sucesso.");
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+            if (emf != null) {
+                emf.close();
+            }
+        }
+    }
+    
+    public void deleteUser(User user) {
+        Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Excluindo User da base de dados.");
+        emf = Persistence.createEntityManagerFactory("myPU");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        
+        try {
+            emf = Persistence.createEntityManagerFactory("myPU");
+            em = emf.createEntityManager();
+            tx = em.getTransaction();
+            tx.begin();
+
+            User userRemove = em.find(User.class, user.getId());
+            em.remove(userRemove);
+            
+            tx.commit();
+            Log.LogAuthenticationComponent("DatabaseManager", "INFO", "User excluído com sucesso.");
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+            if (emf != null) {
+                emf.close();
+            }
         }
     }
     
@@ -177,6 +237,23 @@ public class DatabaseManager {
             }
         } finally {
             em.close();
+        }
+    }
+    
+    public List<User> getUser() {
+        Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Buscando usuários da aplicação.");
+        emf = Persistence.createEntityManagerFactory("myPU");
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            String jpql = "SELECT ut FROM User ut";
+            TypedQuery<User> query = em.createQuery(jpql, User.class);
+            Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Retornando usuários da aplicação.");
+            return query.getResultList();
+            
+        } finally {
+            em.close();
+            emf.close();
         }
     }
     
