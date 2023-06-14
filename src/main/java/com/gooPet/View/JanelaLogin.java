@@ -3,7 +3,11 @@ package com.gooPet.View;
 import com.gooPet.Auth.Database.DatabaseManager;
 import com.gooPet.Auth.Security.Security;
 import com.gooPet.Auth.Log.Log;
+import com.gooPet.View.Client.JanelaAgendaHorario;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.ItemEvent;
+import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -40,6 +44,15 @@ public final class JanelaLogin extends javax.swing.JPanel {
         JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p1);
         janela.getContentPane().remove(Janela.p1);
         janela.add(Janela.p3, BorderLayout.CENTER);
+        janela.pack();
+        janela.setLocationRelativeTo(null);
+    }
+    
+    public void gotoJanelaAgendaHorarioCliente(String actualUserName){
+        Janela.p4 = new JanelaAgendaHorario(actualUserName);
+        JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p1);
+        janela.getContentPane().remove(Janela.p1);
+        janela.add((Component) Janela.p4, BorderLayout.CENTER);
         janela.pack();
         janela.setLocationRelativeTo(null);
     }
@@ -86,7 +99,7 @@ public final class JanelaLogin extends javax.swing.JPanel {
                             break;
                         default:
                             Log.LogAuthenticationComponent("JanelaLogin", "INFO", "Direcionando usuário para a visão de Teste.");
-                            gotoJanelaTeste(email);
+                            gotoJanelaAgendaHorarioCliente(email);
                             break;
                     }
                     break;
@@ -159,6 +172,11 @@ public final class JanelaLogin extends javax.swing.JPanel {
         tf_Email.setBackground(new java.awt.Color(255, 255, 255));
         tf_Email.setForeground(new java.awt.Color(0, 0, 0));
         tf_Email.setText("mauricio@gmail.com");
+        tf_Email.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tf_EmailKeyPressed(evt);
+            }
+        });
 
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("E-mail:");
@@ -187,6 +205,11 @@ public final class JanelaLogin extends javax.swing.JPanel {
         pf_Senha.setBackground(new java.awt.Color(255, 255, 255));
         pf_Senha.setForeground(new java.awt.Color(0, 0, 0));
         pf_Senha.setText("teste123");
+        pf_Senha.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                pf_SenhaKeyPressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -267,6 +290,25 @@ public final class JanelaLogin extends javax.swing.JPanel {
         xy = evt.getY();
     }//GEN-LAST:event_formMousePressed
 
+    private void pf_SenhaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_pf_SenhaKeyPressed
+        if (evt.getKeyCode()==KeyEvent.VK_ENTER){
+            try {
+                login();
+            } catch (Exception ex) {
+                Logger.getLogger(JanelaLogin.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_pf_SenhaKeyPressed
+
+    private void tf_EmailKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_EmailKeyPressed
+        if (evt.getKeyCode()==KeyEvent.VK_ENTER){
+            try {
+                login();
+            } catch (Exception ex) {
+                Logger.getLogger(JanelaLogin.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_tf_EmailKeyPressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_Entrar;

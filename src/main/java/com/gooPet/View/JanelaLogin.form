@@ -144,6 +144,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="mauricio@gmail.com"/>
           </Properties>
+          <Events>
+            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="tf_EmailKeyPressed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
@@ -199,6 +202,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="teste123"/>
           </Properties>
+          <Events>
+            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="pf_SenhaKeyPressed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
