@@ -2,6 +2,7 @@ package com.gooPet.View;
 
 import com.gooPet.View.Client.JanelaAgendaHorario;
 import com.gooPet.View.Client.JanelaShopping;
+import com.gooPet.View.Funcionario.JanelaCadastroProdutos;
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
@@ -19,6 +20,7 @@ public class Janela extends javax.swing.JFrame {
     public static JanelaTeste p3;
     public static JanelaAgendaHorario p4;
     public static JanelaShopping p5;
+    public static JanelaCadastroProdutos p6;
     
     public Janela() throws Exception {
         initComponents();

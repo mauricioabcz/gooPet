@@ -4,6 +4,7 @@ import com.gooPet.Auth.Database.DatabaseManager;
 import com.gooPet.Auth.Security.Security;
 import com.gooPet.Auth.Log.Log;
 import com.gooPet.View.Client.JanelaAgendaHorario;
+import com.gooPet.View.Funcionario.JanelaCadastroProdutos;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
@@ -57,6 +58,15 @@ public final class JanelaLogin extends javax.swing.JPanel {
         janela.setLocationRelativeTo(null);
     }
     
+    public void gotoJanelaCadastroProdutos(String actualUserName){
+        Janela.p6 = new JanelaCadastroProdutos(actualUserName);
+        JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p1);
+        janela.getContentPane().remove(Janela.p1);
+        janela.add(Janela.p6, BorderLayout.CENTER);
+        janela.pack();
+        janela.setLocationRelativeTo(null);
+    }
+    
     public boolean verificaCampos(){
         if (tf_Email.getText().isEmpty()) {
             ReturnMessagePane.errorPainel("Email não preenchido."); 
@@ -95,7 +105,7 @@ public final class JanelaLogin extends javax.swing.JPanel {
                     switch (userType) {
                         case "Administrador":
                             Log.LogAuthenticationComponent("JanelaLogin", "INFO", "Direcionando usuário para a visão de Administrador.");
-                            gotoJanelaCadastro(email);
+                            gotoJanelaCadastroProdutos(email);
                             break;
                         default:
                             Log.LogAuthenticationComponent("JanelaLogin", "INFO", "Direcionando usuário para a visão de Teste.");

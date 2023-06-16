@@ -19,6 +19,8 @@ public class createDadosBasicos {
         Security sec = Security.getInstance();
         sec.generateKeyPair();
         banco.createUserType("Administrador", "Usuário com acesso de administrador");
-        banco.createUser("Maurício", "mauricio@gmail.com", "teste123", "Administrador");
+        banco.createUserType("Cliente", "Usuário com acesso de cliente");
+        banco.createUser("Admin", "admin", sec.encryptPassword("teste123"), "Administrador");
+        banco.createUser("Cliente", "client", sec.encryptPassword("teste123"), "Cliente");
     }
 }
