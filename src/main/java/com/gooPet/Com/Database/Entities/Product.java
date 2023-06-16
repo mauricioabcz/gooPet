@@ -32,7 +32,7 @@ public class Product {
     @Column(name = "Marca")
     private String marca;
     
-    @Column(name = "Valor")
+    @Column(name = "Valor", columnDefinition = "decimal(18, 2)")
     private double valor;
     
     @Column(name = "Imagem")

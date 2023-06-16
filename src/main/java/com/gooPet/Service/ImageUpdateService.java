@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.gooPet.Service;
 
 import java.awt.Graphics2D;
@@ -30,21 +26,17 @@ public class ImageUpdateService {
         return ImageUpdateService.ImageUpdateService;
     }
     
-    public void ajeitaImagem(String imagePath) {
+    public void ajeitaImagem(String imagePath, String imageName, String imageType, int newWidth, int newHeight) {
         try {
             // Carrega a imagem original
             BufferedImage originalImage = ImageIO.read(new File(imagePath));
-
-            // Define a nova largura e altura desejadas
-            int newWidth = 470;
-            int newHeight = 370;
 
             // Redimensiona a imagem
             BufferedImage resizedImage = resizeImage(originalImage, newWidth, newHeight);
 
             // Salva a imagem redimensionada em um arquivo
-            File outputFile = new File(".\\images\\Teste2.jpg");
-            ImageIO.write(resizedImage, "jpg", outputFile);
+            File outputFile = new File(".\\images\\" + imageName);
+            ImageIO.write(resizedImage, imageType, outputFile);
 
             System.out.println("Imagem redimensionada com sucesso!");
 

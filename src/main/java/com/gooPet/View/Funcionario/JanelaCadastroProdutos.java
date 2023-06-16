@@ -2,6 +2,7 @@ package com.gooPet.View.Funcionario;
 
 import com.gooPet.Com.Database.ComercialDatabaseManager;
 import com.gooPet.Com.Database.Entities.Product;
+import com.gooPet.Service.ImageUpdateService;
 import com.gooPet.View.Client.*;
 import com.gooPet.View.Janela;
 import com.gooPet.View.ReturnMessagePane;
@@ -13,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +29,10 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import java.text.Normalizer;
+import java.util.Date;
 import java.util.regex.Pattern;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -34,12 +40,15 @@ import java.util.regex.Pattern;
  */
 public class JanelaCadastroProdutos extends javax.swing.JPanel {
 
-     private ComercialDatabaseManager banco;
+    private ComercialDatabaseManager banco;
+    private ImageUpdateService image; 
+    private List <Product> listaProdutos;
     
     public JanelaCadastroProdutos(String actualUserName) {
         initComponents();
         lb_ActualUser.setText(actualUserName);
         banco = ComercialDatabaseManager.getInstance();
+        atualizaTabela();
         
         setColor(btn_4); 
         ind_4.setOpaque(true);
@@ -677,6 +686,65 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    public void selecionaArquivo(){
+        final JFileChooser fc = new JFileChooser();
+        fc.setDialogType(JFileChooser.OPEN_DIALOG);
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        System.out.println("Diretório atual: " + System.getProperty("user.dir"));
+        File initialDir = new File("./");
+        fc.setCurrentDirectory(initialDir);
+        fc.setDialogTitle("Abrir arquivo de texto");
+        int returnVal = fc.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+
+            String nomeArquivo = file.getName();
+            tf_ImagemProduto.setText(nomeArquivo);
+            
+            String caminhoArquivo = file.getPath();
+            String extensaoArquivo = "";
+
+            int posicaoPonto = nomeArquivo.lastIndexOf(".");
+            if (posicaoPonto >= 0 && posicaoPonto < nomeArquivo.length() - 1) {
+                extensaoArquivo = nomeArquivo.substring(posicaoPonto + 1);
+            }
+            
+            //Processa imagem a ser armazenada na pasta
+            processaImagem(caminhoArquivo, nomeArquivo, extensaoArquivo, 470, 370);
+            //Processa imagem a ser exibida nessa tela
+            processaImagem(caminhoArquivo, "temp." + extensaoArquivo , extensaoArquivo, 470, 300);
+            lb_ProductImagem.setText("");
+            lb_ProductImagem.setIcon(new javax.swing.ImageIcon(".\\images\\temp." + extensaoArquivo));
+        }
+    }
+    
+    public void processaImagem(String imagePath, String imageName, String imageType, int width, int height){
+        image = ImageUpdateService.getInstance();
+        image.ajeitaImagem(imagePath, imageName, imageType, width, height);
+    }
+    
+    public void atualizaTabela(){
+        //Atualiza tabela
+        ((DefaultTableModel) tb_Produtos.getModel()).setRowCount(0);
+        //Busca Produtos
+        listaProdutos = banco.getProducts();
+        for (Product produto : listaProdutos) {
+           ((DefaultTableModel) tb_Produtos.getModel()).addRow(new Object[]{
+            produto.getNome(),
+            produto.getMarca(),
+            "R$ " + produto.getValor()
+        }); 
+        }
+    }
+    
+    public void limpaCampos(){
+        lb_ProductImagem.setIcon(null);
+        tf_NomeProduto.setText("");
+        tf_MarcaProduto.setText("");
+        tf_ValorProduto.setText("");
+        tf_ImagemProduto.setText("");
+    }
+    
     public boolean verificaCamposProduto(){
         if (tf_NomeProduto.getText().isEmpty()) {
             ReturnMessagePane.informationPainel("Campo Nome não preenchido.");
@@ -690,16 +758,23 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
             ReturnMessagePane.informationPainel("Campo Valor não preenchido.");
             return false;
         }
+        try {
+            double testeDouble = Double.parseDouble(tf_ValorProduto.getText());
+        } catch (NumberFormatException e) {
+            ReturnMessagePane.informationPainel("O campo Valor deve ser numérico.");
+            return false;
+        }
         return true;
     }
     
     public void salvaProduto(Product produto){
         int status = banco.createProduct(produto);
         if (status == 0) {
+            limpaCampos();
             ReturnMessagePane.informationPainel("Produto salvo com sucesso.");
         }
-        if (tf_MarcaProduto.getText().isEmpty()) {
-            ReturnMessagePane.errorPainel("´Produto já cadastrado.");
+        if (status == -1) {
+            ReturnMessagePane.errorPainel("Produto já cadastrado.");
         }
     }
     
@@ -716,8 +791,10 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
                 nome = tf_NomeProduto.getText();
                 marca = tf_MarcaProduto.getText();
                 valor = Double.parseDouble(tf_ValorProduto.getText());
-                imagem = tf_ImagemProduto.getText();
+                imagem = "\\images\\" + tf_ImagemProduto.getText();
             }
+            Product novoProduto = new Product(nome, marca, valor, imagem, new Date());
+            salvaProduto(novoProduto);
         }
     }
     
@@ -785,7 +862,7 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
     }//GEN-LAST:event_jPanel2MousePressed
 
     private void bt_SelecionarImagemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_SelecionarImagemActionPerformed
-        
+        selecionaArquivo();
     }//GEN-LAST:event_bt_SelecionarImagemActionPerformed
 
     private void bt_LimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_LimparActionPerformed
@@ -815,7 +892,7 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
     }//GEN-LAST:event_bt_RemoverActionPerformed
 
     private void bt_SalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_SalvarActionPerformed
-
+        processaSalvarProduto();
     }//GEN-LAST:event_bt_SalvarActionPerformed
 
     int xx, xy;
