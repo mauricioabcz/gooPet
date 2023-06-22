@@ -43,6 +43,22 @@ public class ComercialDatabaseManager {
         }
     }
     
+    public List<Product> productSearch(String textSearch) {
+        emf = Persistence.createEntityManagerFactory("myPU");
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            String jpql = "SELECT ut FROM Product ut WHERE ut.nome LIKE :name";
+            TypedQuery<Product> query = em.createQuery(jpql, Product.class);
+            query.setParameter("name", "%" + textSearch + "%");
+            return query.getResultList();
+            
+        } finally {
+            em.close();
+            emf.close();
+        }
+    }
+    
     public int createProduct(Product product){
         emf = Persistence.createEntityManagerFactory("myPU");
         EntityManager em = emf.createEntityManager();

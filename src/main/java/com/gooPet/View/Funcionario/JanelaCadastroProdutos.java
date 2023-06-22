@@ -714,7 +714,8 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
             //Processa imagem a ser exibida nessa tela
             processaImagem(caminhoArquivo, "temp." + extensaoArquivo , extensaoArquivo, 470, 300);
             lb_ProductImagem.setText("");
-            lb_ProductImagem.setIcon(new javax.swing.ImageIcon(".\\images\\temp." + extensaoArquivo));
+            ImageIcon novaImagem = new ImageIcon(".\\images\\temp." + extensaoArquivo);
+            lb_ProductImagem.setIcon(novaImagem);
         }
     }
     
@@ -724,6 +725,7 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
     }
     
     public void atualizaTabela(){
+        limpaCampos();
         //Atualiza tabela
         ((DefaultTableModel) tb_Produtos.getModel()).setRowCount(0);
         //Busca Produtos
@@ -739,10 +741,27 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
     
     public void limpaCampos(){
         lb_ProductImagem.setIcon(null);
+        lb_ProductImagem.setText("<Product_Image>");
         tf_NomeProduto.setText("");
         tf_MarcaProduto.setText("");
         tf_ValorProduto.setText("");
         tf_ImagemProduto.setText("");
+    }
+    
+    public void pesquisa(){
+        limpaCampos();
+        String textoPesquisa = tf_Pesquisar.getText();
+        //Atualiza tabela
+        ((DefaultTableModel) tb_Produtos.getModel()).setRowCount(0);
+        //Busca Produtos
+        listaProdutos = banco.productSearch(textoPesquisa);
+        for (Product produto : listaProdutos) {
+           ((DefaultTableModel) tb_Produtos.getModel()).addRow(new Object[]{
+            produto.getNome(),
+            produto.getMarca(),
+            "R$ " + produto.getValor()
+        }); 
+        }
     }
     
     public boolean verificaCamposProduto(){
@@ -767,10 +786,103 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
         return true;
     }
     
+    public void preencheProduto(){
+        String nome, marca, imagem, caminhoArquivo, extensaoArquivo;
+        nome = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,0).toString();
+        marca = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,1).toString();
+        for (Product produto : listaProdutos) {
+            if (produto.getNome().equals(nome) && produto.getMarca().equals(marca)) {
+                tf_NomeProduto.setText(produto.getNome());
+                tf_MarcaProduto.setText(produto.getMarca());
+                tf_ValorProduto.setText(Double.toString(produto.getValor()));
+                
+                //Processa imagem a ser exibida nessa tela
+                imagem = produto.getImagem();
+                tf_ImagemProduto.setText(imagem);
+                caminhoArquivo = "." + imagem;
+                System.out.println(caminhoArquivo);
+                extensaoArquivo = "";
+                int posicaoPonto = caminhoArquivo.lastIndexOf(".");
+                if (posicaoPonto >= 0 && posicaoPonto < caminhoArquivo.length() - 1) {
+                    extensaoArquivo = caminhoArquivo.substring(posicaoPonto + 1);
+                }
+                processaImagem(caminhoArquivo, "temp." + extensaoArquivo , extensaoArquivo, 470, 300);
+                lb_ProductImagem.setText("");
+                lb_ProductImagem.setIcon(null);
+                lb_ProductImagem.setIcon(new javax.swing.ImageIcon(".\\images\\temp." + extensaoArquivo));
+            }
+        }
+    }
+    
+    public void editaProduto(Product product){
+        //Faz edição
+        banco.updateProduct(product);
+        atualizaTabela();
+        ReturnMessagePane.informationPainel("Produto editado com sucesso.");
+    }
+    
+    public void processaEditarProduto(){
+        if (tb_Produtos.getSelectedRow() == -1) {
+            ReturnMessagePane.errorPainel("Selecione um produto.");
+        } else {
+            if (verificaCamposProduto()) {
+                //Cria produto editado
+                String nome, marca, imagem, nomeTabela, marcaTabela;
+                double valor;
+                if (tf_ImagemProduto.getText().isEmpty()) {
+                    nome = tf_NomeProduto.getText();
+                    marca = tf_MarcaProduto.getText();
+                    valor = Double.parseDouble(tf_ValorProduto.getText());
+                    imagem = null;
+                } else {
+                    nome = tf_NomeProduto.getText();
+                    marca = tf_MarcaProduto.getText();
+                    valor = Double.parseDouble(tf_ValorProduto.getText());
+                    imagem = "\\images\\" + tf_ImagemProduto.getText();
+                }
+                //Pega o produto selecionado
+                nomeTabela = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,0).toString();
+                marcaTabela = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,1).toString();
+                for (Product produto : listaProdutos) {
+                    if (produto.getNome().equals(nomeTabela) && produto.getMarca().equals(marcaTabela)) {
+                        produto.setNome(nome);
+                        produto.setMarca(marca);
+                        produto.setValor(valor);
+                        produto.setImagem(imagem);
+                        editaProduto(produto);
+                    }
+                }
+            }
+        }
+    }
+    
+    private void removeProduto(Product produto){
+        //Faz remoção
+        banco.deleteProduct(produto);
+        atualizaTabela();
+        ReturnMessagePane.informationPainel("Produto removido com sucesso.");
+    }
+    
+    public void processaRemoverProduto(){
+        if (tb_Produtos.getSelectedRow() == -1) {
+            ReturnMessagePane.errorPainel("Selecione um produto.");
+        } else {
+            String nome, marca;
+            nome = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,0).toString();
+            marca = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,1).toString();
+            for (Product produto : listaProdutos) {
+                if (produto.getNome().equals(nome) && produto.getMarca().equals(marca)) {
+                    removeProduto(produto);
+                }
+            }
+        }
+    }
+    
     public void salvaProduto(Product produto){
         int status = banco.createProduct(produto);
         if (status == 0) {
             limpaCampos();
+            atualizaTabela();
             ReturnMessagePane.informationPainel("Produto salvo com sucesso.");
         }
         if (status == -1) {
@@ -866,33 +978,35 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
     }//GEN-LAST:event_bt_SelecionarImagemActionPerformed
 
     private void bt_LimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_LimparActionPerformed
-        
+        limpaCampos();
     }//GEN-LAST:event_bt_LimparActionPerformed
 
     private void bt_AtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_AtualizarActionPerformed
-       
+       atualizaTabela();
     }//GEN-LAST:event_bt_AtualizarActionPerformed
 
     private void tb_ProdutosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tb_ProdutosKeyReleased
-        //        selecionarVeiculo();
-        //        atualizaVinculoComTransportadores();
+        preencheProduto();
     }//GEN-LAST:event_tb_ProdutosKeyReleased
 
     private void tb_ProdutosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tb_ProdutosMouseClicked
-        //        selecionarVeiculo();
-        //        atualizaVinculoComTransportadores();
+        preencheProduto();
     }//GEN-LAST:event_tb_ProdutosMouseClicked
 
     private void bt_PesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_PesquisarActionPerformed
-        // TODO add your handling code here:
+        pesquisa();
     }//GEN-LAST:event_bt_PesquisarActionPerformed
 
     private void bt_RemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_RemoverActionPerformed
-        // TODO add your handling code here:
+        processaRemoverProduto();
     }//GEN-LAST:event_bt_RemoverActionPerformed
 
     private void bt_SalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_SalvarActionPerformed
-        processaSalvarProduto();
+        if (tb_Produtos.getSelectedRow() == -1) {
+            processaSalvarProduto();
+        } else {
+            processaEditarProduto();
+        }
     }//GEN-LAST:event_bt_SalvarActionPerformed
 
     int xx, xy;

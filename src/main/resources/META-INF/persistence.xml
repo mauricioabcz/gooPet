@@ -10,6 +10,7 @@
 	<class>com.auth.Database.Entities.UserType</class>
 	<class>com.auth.Database.Entities.Config</class>
 	<class>com.Com.Database.Entities.Product</class>
+	<class>com.Com.Database.Entities.Cart</class>
     <properties>
 		<!--  Propriedades JDBC SQL SERVER  -->
     <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
