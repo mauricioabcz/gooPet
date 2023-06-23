@@ -192,7 +192,6 @@ public final class JanelaLogin extends javax.swing.JPanel {
 
         tf_Email.setBackground(new java.awt.Color(255, 255, 255));
         tf_Email.setForeground(new java.awt.Color(0, 0, 0));
-        tf_Email.setText("admin");
         tf_Email.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 tf_EmailKeyPressed(evt);
@@ -225,7 +224,6 @@ public final class JanelaLogin extends javax.swing.JPanel {
 
         pf_Senha.setBackground(new java.awt.Color(255, 255, 255));
         pf_Senha.setForeground(new java.awt.Color(0, 0, 0));
-        pf_Senha.setText("teste123");
         pf_Senha.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 pf_SenhaKeyPressed(evt);
