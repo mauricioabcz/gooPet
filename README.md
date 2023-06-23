@@ -6,7 +6,7 @@ O sistema gooPet tem como finalidade auxiliar no processo de gestão em uma empr
 ## Instalação
 - Ter o SQL Server Management Studio versão 19+;
 - Criar um banco de dados de nome `gooPet` e os schemas `auth` e `com`, as demais necessidades de banco são gerenciadas pelo Hibernate;
-- Efetuar o download ZIP do projeto, verificar se a versão do java é compatível com a máquina, caso negativo modificar no arquivo pom.xml;
+- Efetuar o download ZIP do projeto a última release, verificar se a versão do java é compatível com a máquina, caso negativo modificar no arquivo pom.xml;
 - Adicionar a dependência AbsoluteLayout-RELEASE65.jar.
 
 ## Como utilizar
@@ -25,7 +25,7 @@ O sistema gooPet tem como finalidade auxiliar no processo de gestão em uma empr
   - Gerenciar Usuários.
     - Log de autenticação.  
 - Compras;
-  - Gerenciar Carrinho:
+  - Gerenciar Carrinho;
   - Realizar pedido.
 
 ## Em Desenvolvimento
