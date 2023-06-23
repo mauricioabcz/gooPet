@@ -9,7 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
-        <exec.mainClass>com.auth.goopet.GooPet</exec.mainClass>
+        <exec.mainClass>com.gooPet.View.Janela</exec.mainClass>
     </properties>
     <build>
 	<plugins>
@@ -23,7 +23,7 @@
                      </descriptorRefs>
                      <archive>
                          <manifest>
-                             <mainClass>com.auth.View.Janela</mainClass>
+                             <mainClass>com.gooPet.View.Janela</mainClass>
                          </manifest>
                      </archive>
                  </configuration>
