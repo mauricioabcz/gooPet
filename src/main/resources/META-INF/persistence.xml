@@ -12,7 +12,7 @@
 	<class>com.Com.Database.Entities.Product</class>
 	<class>com.Com.Database.Entities.Cart</class>
     <properties>
-		<!--  Propriedades JDBC SQL SERVER  -->
+	<!--  Propriedades JDBC SQL SERVER  -->
     <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
     <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=gooPet;encrypt=false"/>
     <property name="javax.persistence.jdbc.user" value="sa"/>

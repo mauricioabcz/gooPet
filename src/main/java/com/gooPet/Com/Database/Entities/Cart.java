@@ -1,7 +1,6 @@
 package com.gooPet.Com.Database.Entities;
 
 import com.gooPet.Auth.Database.Entities.User;
-import com.gooPet.Auth.Database.Entities.UserType;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -37,14 +36,6 @@ public class Cart {
     @JoinColumn(name = "UserId")
     private User user;
     
-    @OneToMany
-    @JoinTable(
-        name = "[com].[CartProduct]", // Nome da tabela intermediária
-        joinColumns = @JoinColumn(name = "CartId"), // Coluna que relaciona com o carrinho
-        inverseJoinColumns = @JoinColumn(name = "ProductId") // Coluna que relaciona com o produto
-    )
-    private List<Product> listaProdutos;
-    
     @Column(name = "isClosed")
     private int isClosed;
     
@@ -55,5 +46,61 @@ public class Cart {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "InsertDate")
     private Date insertDate;
+
+    public Cart() {
+        
+    }
+
+    public Cart(User user, int isClosed, Date closeDate, Date insertDate) {
+        this.user = user;
+        this.isClosed = isClosed;
+        this.closeDate = closeDate;
+        this.insertDate = insertDate;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
     
+    public int getIsClosed() {
+        return isClosed;
+    }
+
+    public void setIsClosed(int isClosed) {
+        this.isClosed = isClosed;
+    }
+
+    public Date getCloseDate() {
+        return closeDate;
+    }
+
+    public void setCloseDate(Date closeDate) {
+        this.closeDate = closeDate;
+    }
+
+    public Date getInsertDate() {
+        return insertDate;
+    }
+
+    public void setInsertDate(Date insertDate) {
+        this.insertDate = insertDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Cart{" + "user=" + user + ", isClosed=" + isClosed + ", closeDate=" + closeDate + ", insertDate=" + insertDate + '}';
+    }
+
 }
