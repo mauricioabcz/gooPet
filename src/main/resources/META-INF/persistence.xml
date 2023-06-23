@@ -11,6 +11,7 @@
 	<class>com.auth.Database.Entities.Config</class>
 	<class>com.Com.Database.Entities.Product</class>
 	<class>com.Com.Database.Entities.Cart</class>
+	<class>com.Com.Database.Entities.CartProduct</class>
     <properties>
 	<!--  Propriedades JDBC SQL SERVER  -->
     <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
@@ -20,7 +21,7 @@
 
 	<!-- Configurações específicas do Hibernate -->
     <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
-    <property name="hibernate.hbm2ddl.auto" value="none"/>
+    <property name="hibernate.hbm2ddl.auto" value="update"/>
     <property name="hibernate.show_sql" value="true"/>
     <property name="hibernate.format_sql" value="true"/>
     
