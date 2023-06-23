@@ -15,13 +15,15 @@ O sistema gooPet tem como finalidade auxiliar no processo de gestão em uma empr
 - A janela de Gestão de Produtos possibilidade gerenciar todos os produtos da aplicação, adicionar, editar e remover;
 - A janela Usuários possibilida gerenciar os usuários e grupos cadastrados na aplicaçaõ, adicionar, editar e remover;
 - A janela Shopping viabiliza que o cliente adicione produtos ao seu carrinho;
-- A janela Carrinho garante que o usuário possa gerenciar seu carrinho e fechar a compra, gerando um novo carrinho.
+- A janela Carrinho garante que o usuário possa gerenciar seu carrinho e fechar a compra, gerando um novo carrinho;
+- O componente de autenticação grava um log em `/logs/autheticationComponentlog.txt`, com todos os dados relativos ao processo de login.
 
 ## Funcionalidades
 - Cadastros:
   - Gerenciar Produto;
   - Gerenciar Grupo de Usuário;
   - Gerenciar Usuários.
+    - Log de autenticação.  
 - Compras;
   - Gerenciar Carrinho:
   - Realizar pedido.
