@@ -1,26 +1,30 @@
 package com.gooPet.View.Client;
 
+import com.gooPet.Auth.Database.DatabaseManager;
 import com.gooPet.Com.Database.ComercialDatabaseManager;
+import com.gooPet.Com.Database.Entities.Cart;
+import com.gooPet.Com.Database.Entities.CartProduct;
 import com.gooPet.Com.Database.Entities.Product;
+import com.gooPet.Command.CartManager;
+import com.gooPet.Command.Command;
+import com.gooPet.Command.RemoveProductCommand;
+import com.gooPet.Command.UpdateProductCommand;
 import com.gooPet.Service.ImageUpdateService;
 import com.gooPet.View.Janela;
 import com.gooPet.View.ReturnMessagePane;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -30,53 +34,33 @@ import javax.swing.table.DefaultTableModel;
 public class JanelaCarrinho extends javax.swing.JPanel {
 
     private ComercialDatabaseManager banco;
+    private DatabaseManager bancoAuth;
     private ImageUpdateService image; 
     private List <Product> listaProdutos;
-    
+    private Cart carrinho;
+    private List<CartProduct> listaCarrinho;
+    private Command command;
+    private CartManager cartManager;
+    private double valorTotal;
+    private List<Cart> listaAllCarts;
+
     public JanelaCarrinho(String actualUserName) throws IOException {
         initComponents();
         lb_ActualUser.setText(actualUserName);
         banco = ComercialDatabaseManager.getInstance();
+        bancoAuth = DatabaseManager.getInstance();
+        listaProdutos = new ArrayList<Product>();
+        cartManager = new CartManager();
         atualizaTabela();
+        
+        carrinho = banco.getCartByUser(bancoAuth.getUserByEmail(lb_ActualUser.getText()));
+        atualizaNumeroCarrinho();
+        
+        preencheCarrinhoComboBox();
         
         setColor(btn_Carrinho); 
         ind_2.setOpaque(true);
         resetColor(new JPanel[]{btn_Shopping,btn_Home,btn_4, btn_JanelaSettings}, new JPanel[]{ind_3,ind_1, ind_4, ind_5});
-        
-//        ajeitaImagem();
-//        testeImagem();
-    }
-    
-    public void testeImagem() throws IOException{
-        lb_ProductImage.setText("");
-        lb_ProductImage.setIcon(new javax.swing.ImageIcon(".\\images\\Teste2.jpg"));
-        
-        lb_ProductName.setText("Jogo do Bicho");
-        lb_ProductMarca.setText("Caixa Econômica Federal");
-        lb_ProductValue.setText("R$ 3,00");
-    }
-    
-    public void ajeitaImagem() {
-        try {
-            BufferedImage originalImage = ImageIO.read(new File(".\\images\\Teste.jpg"));
-            int newWidth = 470;
-            int newHeight = 370;
-            BufferedImage resizedImage = resizeImage(originalImage, newWidth, newHeight);
-            File outputFile = new File(".\\images\\Teste2.jpg");
-            ImageIO.write(resizedImage, "jpg", outputFile);
-            System.out.println("Imagem redimensionada com sucesso!");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    private static BufferedImage resizeImage(BufferedImage originalImage, int newWidth, int newHeight) {
-        BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, originalImage.getType());
-        Graphics2D g2d = resizedImage.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2d.drawImage(originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH), 0, 0, null);
-        g2d.dispose();
-        return resizedImage;
     }
     
     public void gotoJanelaShopping() throws IOException{
@@ -130,7 +114,6 @@ public class JanelaCarrinho extends javax.swing.JPanel {
         lb_Produtos = new javax.swing.JLabel();
         lb_Nome = new javax.swing.JLabel();
         bt_Pesquisar = new javax.swing.JButton();
-        tf_Pesquisar = new javax.swing.JTextField();
         lb_ProductName = new javax.swing.JLabel();
         lb_ProductValue = new javax.swing.JLabel();
         sp_Quantidade = new javax.swing.JSpinner();
@@ -142,6 +125,11 @@ public class JanelaCarrinho extends javax.swing.JPanel {
         lb_Nome1 = new javax.swing.JLabel();
         bt_Limpar = new javax.swing.JButton();
         bt_Remover = new javax.swing.JButton();
+        cb_Compras = new javax.swing.JComboBox<>();
+        bt_RemoverTudo = new javax.swing.JButton();
+        bt_FechaCarrinho = new javax.swing.JButton();
+        lb_TotalCarrinho = new javax.swing.JLabel();
+        lb_ValorTotalDoCarrinho = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         lb_Logout = new javax.swing.JLabel();
@@ -447,9 +435,9 @@ public class JanelaCarrinho extends javax.swing.JPanel {
         });
 
         lb_Produtos.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lb_Produtos.setText("Produtos");
+        lb_Produtos.setText("Compras");
 
-        lb_Nome.setText("Nome:");
+        lb_Nome.setText("Compras realizadas:");
 
         bt_Pesquisar.setBackground(new java.awt.Color(255, 255, 255));
         bt_Pesquisar.setText("Pesquisar");
@@ -531,6 +519,34 @@ public class JanelaCarrinho extends javax.swing.JPanel {
             }
         });
 
+        cb_Compras.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione" }));
+
+        bt_RemoverTudo.setBackground(new java.awt.Color(255, 255, 255));
+        bt_RemoverTudo.setText("Remover Tudo");
+        bt_RemoverTudo.setFocusPainted(false);
+        bt_RemoverTudo.setFocusable(false);
+        bt_RemoverTudo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt_RemoverTudoActionPerformed(evt);
+            }
+        });
+
+        bt_FechaCarrinho.setBackground(new java.awt.Color(255, 255, 255));
+        bt_FechaCarrinho.setText("Fechar Carrinho");
+        bt_FechaCarrinho.setFocusPainted(false);
+        bt_FechaCarrinho.setFocusable(false);
+        bt_FechaCarrinho.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt_FechaCarrinhoActionPerformed(evt);
+            }
+        });
+
+        lb_TotalCarrinho.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lb_TotalCarrinho.setText("Total Carrinho:");
+
+        lb_ValorTotalDoCarrinho.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lb_ValorTotalDoCarrinho.setText("<Valor_Total>");
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -542,7 +558,7 @@ public class JanelaCarrinho extends javax.swing.JPanel {
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(lb_Nome)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tf_Pesquisar)
+                        .addComponent(cb_Compras, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(bt_Pesquisar))
                     .addGroup(jPanel6Layout.createSequentialGroup()
@@ -550,7 +566,13 @@ public class JanelaCarrinho extends javax.swing.JPanel {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(bt_AtualizarTabelaProdutos)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lb_TotalCarrinho)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lb_ValorTotalDoCarrinho)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(bt_RemoverTudo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(bt_Remover)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -565,6 +587,8 @@ public class JanelaCarrinho extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lb_Total)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(bt_FechaCarrinho)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(bt_Limpar)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(bt_SalvarCarrinho))
@@ -591,8 +615,8 @@ public class JanelaCarrinho extends javax.swing.JPanel {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lb_Nome)
                     .addComponent(bt_Pesquisar)
-                    .addComponent(tf_Pesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lb_Nome1))
+                    .addComponent(lb_Nome1)
+                    .addComponent(cb_Compras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
@@ -612,7 +636,11 @@ public class JanelaCarrinho extends javax.swing.JPanel {
                     .addComponent(lb_ProductName1)
                     .addComponent(lb_Total)
                     .addComponent(bt_Limpar)
-                    .addComponent(bt_Remover))
+                    .addComponent(bt_Remover)
+                    .addComponent(bt_RemoverTudo)
+                    .addComponent(bt_FechaCarrinho)
+                    .addComponent(lb_TotalCarrinho)
+                    .addComponent(lb_ValorTotalDoCarrinho))
                 .addContainerGap())
         );
 
@@ -696,13 +724,80 @@ public class JanelaCarrinho extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    public void removerTudo(){
+        for(CartProduct cartProduct : listaCarrinho){
+            command = new RemoveProductCommand(carrinho, cartProduct);
+            cartManager.setCommand(command);
+            cartManager.executeCommand();
+        }
+        atualizaTabelaPosAtt();
+        ReturnMessagePane.informationPainel("Remoção realizada com sucesso.");
+    }
+
+    public void preencheCarrinhoComboBox() {
+        listaAllCarts = banco.getCartAllCartsByUser(bancoAuth.getUserByEmail(lb_ActualUser.getText()));
+        cb_Compras.addItem("Carrinho Atual");
+        for (Cart cart : listaAllCarts) {
+            if (cart.getCloseDate() == null) {
+                
+            } else {
+                cb_Compras.addItem(cart.getCloseDate().toString());
+            }
+        }
+    }
+    public void buscaCarrinho(){
+        carrinho = banco.getCartByUser(bancoAuth.getUserByEmail(lb_ActualUser.getText()));
+    }
+    
+    public void fechaCarrinho(){
+        calculaValorTotal();
+        // Exibe uma janela de confirmação com opções Sim e Não
+        int resposta = JOptionPane.showConfirmDialog(null, "Valor da compra R$" + valorTotal + "\nDeseja continuar?", "Confirmação", JOptionPane.YES_NO_OPTION);
+
+        switch (resposta) {
+            case JOptionPane.YES_OPTION -> {
+                buscaCarrinho();
+                carrinho.setIsClosed(1);
+                carrinho.setCloseDate(new Date());
+                banco.updateCart(carrinho);
+                carrinho = new Cart(bancoAuth.getUserByEmail(lb_ActualUser.getText()), 0, 0, null, new Date());
+                banco.createCart(carrinho);
+                buscaCarrinho();
+                atualizaTabelaPosAtt();
+                atualizaNumeroCarrinho();
+                ReturnMessagePane.informationPainel("Seu pedido foi realizado com sucesso!\nAguarde nosso contato.");
+            }
+            default -> {
+            }
+        }
+    }
+    
+    public void calculaValorTotal(){
+        valorTotal = 0.00;
+        for (Product produto : listaProdutos) {
+            for(CartProduct cartProduct : listaCarrinho){
+                if (produto.getId().equals(cartProduct.getProduct().getId())) {
+                    valorTotal = valorTotal + (produto.getValor() * cartProduct.getQuantidade());
+                }
+            }
+        }
+        String valorString = String.format("%.2f", valorTotal);
+        valorString = valorString.replace(",", ".");
+        valorTotal = Double.parseDouble(valorString);
+        lb_ValorTotalDoCarrinho.setText(valorString);
+    }
     
     public void atualizaTabela(){
         limpaCampos();
         //Atualiza tabela
         ((DefaultTableModel) tb_Produtos.getModel()).setRowCount(0);
-        //Busca Produtos
-        listaProdutos = banco.getProducts();
+        //Busca Dados
+        buscaCarrinho();
+        listaCarrinho = banco.getCartProductByCart(carrinho);
+        for(CartProduct productCart : listaCarrinho){
+            listaProdutos.add(banco.getProductByCartProduct(productCart));
+        }
+        //Preenche tabela
         for (Product produto : listaProdutos) {
            ((DefaultTableModel) tb_Produtos.getModel()).addRow(new Object[]{
             produto.getNome(),
@@ -710,22 +805,34 @@ public class JanelaCarrinho extends javax.swing.JPanel {
             "R$ " + produto.getValor()
         }); 
         }
+        calculaValorTotal();
+    }
+    
+    public void atualizaTabelaPosAtt(){
+        limpaCampos();
+        atualizaNumeroCarrinho();
+        //Atualiza tabela
+        ((DefaultTableModel) tb_Produtos.getModel()).setRowCount(0);
+        //Busca Dados
+        buscaCarrinho();
+        listaCarrinho = banco.getCartProductByCart(carrinho);
+        listaProdutos = new ArrayList<>();
+        for(CartProduct productCart : listaCarrinho){
+            listaProdutos.add(banco.getProductByCartProduct(productCart));
+        }
+        //Preenche tabela
+        for (Product produto : listaProdutos) {
+           ((DefaultTableModel) tb_Produtos.getModel()).addRow(new Object[]{
+            produto.getNome(),
+            produto.getMarca(),
+            "R$ " + produto.getValor()
+        }); 
+        }
+        calculaValorTotal();
     }
     
     public void pesquisa(){
-        limpaCampos();
-        String textoPesquisa = tf_Pesquisar.getText();
-        //Atualiza tabela
-        ((DefaultTableModel) tb_Produtos.getModel()).setRowCount(0);
-        //Busca Produtos
-        listaProdutos = banco.productSearch(textoPesquisa);
-        for (Product produto : listaProdutos) {
-           ((DefaultTableModel) tb_Produtos.getModel()).addRow(new Object[]{
-            produto.getNome(),
-            produto.getMarca(),
-            "R$ " + produto.getValor()
-        }); 
-        }
+        emObras();
     }
     
     public void limpaCampos(){
@@ -738,12 +845,64 @@ public class JanelaCarrinho extends javax.swing.JPanel {
         lb_Total.setText("0.00");
     }
     
+    public void removerProdutoCarrinho(){
+        String nome, marca;
+        nome = lb_ProductName.getText();
+        marca = lb_ProductMarca.getText();
+        for (Product produto : listaProdutos) {
+            if (produto.getNome().equals(nome) && produto.getMarca().equals(marca)) {
+                for(CartProduct cartProduct : listaCarrinho){
+                    if (produto.getId().equals(cartProduct.getProduct().getId())) {
+                        command = new RemoveProductCommand(carrinho, cartProduct);
+                        cartManager.setCommand(command);
+                        cartManager.executeCommand();
+                    }
+                }
+                limpaCampos();
+                atualizaTabelaPosAtt();
+                ReturnMessagePane.informationPainel("Produto removido com sucesso.");
+            }
+        }
+    }
+    
+    public void atualizaNumeroCarrinho(){
+        int number = banco.getNumberProductsInCart(carrinho);
+        lb_Carrinho.setText("Carrinho(" + number + ")");
+    }
+    
+    public void atualizaQuantidade(){
+        String nome, marca;
+        nome = lb_ProductName.getText();
+        marca = lb_ProductMarca.getText();
+        for (Product produto : listaProdutos) {
+            if (produto.getNome().equals(nome) && produto.getMarca().equals(marca)) {
+                for(CartProduct cartProduct : listaCarrinho){
+                    if (produto.getId().equals(cartProduct.getProduct().getId())) {
+                        cartProduct.setQuantidade(Integer.parseInt(sp_Quantidade.getValue().toString()));
+                        command = new UpdateProductCommand(carrinho, cartProduct);
+                        cartManager.setCommand(command);
+                        cartManager.executeCommand();
+                    }
+                }
+                limpaCampos();
+                atualizaTabelaPosAtt();
+                ReturnMessagePane.informationPainel("Quantidade salva com sucesso.");
+            }
+        }
+    }
+    
     public void preencheProduto(){
         String nome, marca;
         nome = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,0).toString();
         marca = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,1).toString();
         for (Product produto : listaProdutos) {
             if (produto.getNome().equals(nome) && produto.getMarca().equals(marca)) {
+                for(CartProduct cartProduct : listaCarrinho){
+                    if (produto.getId().equals(cartProduct.getProduct().getId())) {
+                        sp_Quantidade.setValue(cartProduct.getQuantidade());
+                        calculaTotal();
+                    }
+                }
                 lb_ProductName.setText(produto.getNome());
                 lb_ProductMarca.setText(produto.getMarca());
                 lb_ProductValue.setText(Double.toString(produto.getValor()));
@@ -786,7 +945,6 @@ public class JanelaCarrinho extends javax.swing.JPanel {
         setColor(btn_Carrinho);
         ind_2.setOpaque(true);
         resetColor(new JPanel[]{btn_Home,btn_Shopping,btn_4, btn_JanelaSettings}, new JPanel[]{ind_1,ind_3, ind_4, ind_5});
-        emObras();
     }//GEN-LAST:event_btn_CarrinhoMouseReleased
 
     private void btn_ShoppingMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_ShoppingMousePressed
@@ -838,11 +996,12 @@ public class JanelaCarrinho extends javax.swing.JPanel {
     }//GEN-LAST:event_jPanel2MousePressed
 
     private void bt_SalvarCarrinhoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_SalvarCarrinhoActionPerformed
-        
+        atualizaQuantidade();
     }//GEN-LAST:event_bt_SalvarCarrinhoActionPerformed
 
     private void bt_AtualizarTabelaProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_AtualizarTabelaProdutosActionPerformed
-        atualizaTabela();
+        atualizaTabelaPosAtt();
+        ReturnMessagePane.informationPainel("Carrinho atualizado.");
     }//GEN-LAST:event_bt_AtualizarTabelaProdutosActionPerformed
 
     private void tb_ProdutosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tb_ProdutosKeyReleased
@@ -870,8 +1029,16 @@ public class JanelaCarrinho extends javax.swing.JPanel {
     }//GEN-LAST:event_sp_QuantidadeKeyReleased
 
     private void bt_RemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_RemoverActionPerformed
-        // TODO add your handling code here:
+        removerProdutoCarrinho();
     }//GEN-LAST:event_bt_RemoverActionPerformed
+
+    private void bt_RemoverTudoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_RemoverTudoActionPerformed
+        removerTudo();
+    }//GEN-LAST:event_bt_RemoverTudoActionPerformed
+
+    private void bt_FechaCarrinhoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_FechaCarrinhoActionPerformed
+        fechaCarrinho();
+    }//GEN-LAST:event_bt_FechaCarrinhoActionPerformed
 
     int xx, xy;
         private void setColor(JPanel pane)
@@ -892,15 +1059,18 @@ public class JanelaCarrinho extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_AtualizarTabelaProdutos;
+    private javax.swing.JButton bt_FechaCarrinho;
     private javax.swing.JButton bt_Limpar;
     private javax.swing.JButton bt_Pesquisar;
     private javax.swing.JButton bt_Remover;
+    private javax.swing.JButton bt_RemoverTudo;
     private javax.swing.JButton bt_SalvarCarrinho;
     private javax.swing.JPanel btn_4;
     private javax.swing.JPanel btn_Carrinho;
     private javax.swing.JPanel btn_Home;
     private javax.swing.JPanel btn_JanelaSettings;
     private javax.swing.JPanel btn_Shopping;
+    private javax.swing.JComboBox<String> cb_Compras;
     private javax.swing.JPanel ind_1;
     private javax.swing.JPanel ind_2;
     private javax.swing.JPanel ind_3;
@@ -928,10 +1098,11 @@ public class JanelaCarrinho extends javax.swing.JPanel {
     private javax.swing.JLabel lb_Shopping;
     private javax.swing.JLabel lb_TelaRotasTitle;
     private javax.swing.JLabel lb_Total;
+    private javax.swing.JLabel lb_TotalCarrinho;
+    private javax.swing.JLabel lb_ValorTotalDoCarrinho;
     private javax.swing.JPanel pn_ProductImage;
     private javax.swing.JPanel side_pane;
     private javax.swing.JSpinner sp_Quantidade;
     private javax.swing.JTable tb_Produtos;
-    private javax.swing.JTextField tf_Pesquisar;
     // End of variables declaration//GEN-END:variables
 }

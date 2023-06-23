@@ -240,6 +240,31 @@ public class DatabaseManager {
         }
     }
     
+    public User getUserByEmail(String email) {
+        emf = Persistence.createEntityManagerFactory("myPU");
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Recuperando do usuário: " + email);
+            Query userQuery = em.createQuery("SELECT u FROM User u WHERE u.email = :email");
+            userQuery.setParameter("email", email);
+            List<User> usersWithEmail = userQuery.getResultList();
+
+            if (!usersWithEmail.isEmpty()) {
+                User user = usersWithEmail.get(0);
+                UserType userType = user.getUserType();
+                Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Usuário do tipo: " + userType.getNome());
+                return usersWithEmail.get(0);
+            } else {
+                Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Usuário não encontrado.");
+                ReturnMessagePane.errorPainel("Usuário não encontrado.");
+                throw new IllegalArgumentException("Usuário não encontrado.");
+            }
+        } finally {
+            em.close();
+        }
+    }
+    
     public List<User> getUser() {
         Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Buscando usuários da aplicação.");
         emf = Persistence.createEntityManagerFactory("myPU");

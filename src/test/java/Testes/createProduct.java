@@ -6,12 +6,11 @@ import com.gooPet.Com.Database.ComercialDatabaseManager;
 import com.gooPet.Com.Database.Entities.Cart;
 import com.gooPet.Com.Database.Entities.CartProduct;
 import com.gooPet.Com.Database.Entities.Product;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.junit.Test;
+import com.gooPet.Command.UpdateProductCommand;
+import com.gooPet.Command.*;
 
 /**
  *
@@ -20,6 +19,28 @@ import org.junit.Test;
 public class createProduct {
     
     public createProduct() {
+    }
+    
+    @Test
+    public void geraCarrinhoCommand(){
+        //Pega dados do banco
+        ComercialDatabaseManager bancoCom = ComercialDatabaseManager.getInstance();
+        DatabaseManager bancoAuth = DatabaseManager.getInstance();
+        List<Product> listaProdutos = bancoCom.getProducts();
+        List<User> listaUsers = bancoAuth.getUser();
+        
+        Cart cart = bancoCom.getCartByUser(listaUsers.get(0));
+        
+        // Criar comandos para adicionar e remover produtos
+        CartProduct cartProduct = new CartProduct(cart, listaProdutos.get(2), 20);
+        Command addProductCommand = new AddProductCommand(cart, cartProduct);
+//        cartProduct = new CartProduct(cart, listaProdutos.get(0), 3);
+//        Command removeProductCommand = new RemoveProductCommand(cart, cartProduct);
+
+        // Gerenciar os comandos
+        CartManager cartManager = new CartManager();
+        cartManager.setCommand(addProductCommand);
+        cartManager.executeCommand();
     }
     
     @Test

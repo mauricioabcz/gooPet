@@ -191,16 +191,28 @@ public class ComercialDatabaseManager {
         }
     }
     
-    public int createCartProduct(CartProduct cartProduct){
+    public int createCartProduct(CartProduct cartProduct) {
         emf = Persistence.createEntityManagerFactory("myPU");
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
 
         try {
             tx.begin();
-            em.persist(cartProduct);
-            tx.commit();
-            return 0;
+
+            // Verificar se o produto já está presente no carrinho
+            Query cartProductQuery = em.createQuery("SELECT cp FROM CartProduct cp WHERE cp.cart.id = :cartId AND cp.product.id = :productId");
+            cartProductQuery.setParameter("cartId", cartProduct.getCart().getId());
+            cartProductQuery.setParameter("productId", cartProduct.getProduct().getId());
+            List<CartProduct> existingCartProducts = cartProductQuery.getResultList();
+
+            if (existingCartProducts.isEmpty()) {
+                em.persist(cartProduct);
+                tx.commit();
+                return 0;
+            } else {
+                // Produto já está presente no carrinho
+                return -1;
+            }
         } finally {
             em.close();
             emf.close();
@@ -226,6 +238,39 @@ public class ComercialDatabaseManager {
         }
     }
     
+    public List<Cart> getCartAllCartsByUser(User user) {
+        emf = Persistence.createEntityManagerFactory("myPU");
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            Query cartQuery = em.createQuery("SELECT u FROM Cart u WHERE u.user.id = :userId order by u.closeDate desc");
+            cartQuery.setParameter("userId", user.getId());
+            List<Cart> listCarts = cartQuery.getResultList();
+            return listCarts;
+        } finally {
+            em.close();
+        }
+    }
+    
+    public int getNumberProductsInCart(Cart cart){
+        if (cart == null) {
+            return 0;
+        } else {
+            emf = Persistence.createEntityManagerFactory("myPU");
+            EntityManager em = emf.createEntityManager();
+
+            try {
+                Query cartQuery = em.createQuery("SELECT u FROM CartProduct u WHERE u.cart.id = :cartId");
+                cartQuery.setParameter("cartId", cart.getId());
+                List<CartProduct> cartProducts = cartQuery.getResultList();
+                return cartProducts.size();
+
+            } finally {
+                em.close();
+            }
+        }
+    }
+    
     public List<CartProduct> getCartProductByCart(Cart cart) {
         emf = Persistence.createEntityManagerFactory("myPU");
         EntityManager em = emf.createEntityManager();
@@ -235,6 +280,21 @@ public class ComercialDatabaseManager {
             cartQuery.setParameter("cartId", cart.getId());
             List<CartProduct> cartProducts = cartQuery.getResultList();
             return cartProducts;
+            
+        } finally {
+            em.close();
+        }
+    }
+    
+    public Product getProductByCartProduct(CartProduct cartProduct) {
+        emf = Persistence.createEntityManagerFactory("myPU");
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            Query cartQuery = em.createQuery("SELECT u FROM Product u WHERE u.id = :productId");
+            cartQuery.setParameter("productId", cartProduct.getProduct().getId());
+            List<Product> cartProducts = cartQuery.getResultList();
+            return cartProducts.get(0);
             
         } finally {
             em.close();

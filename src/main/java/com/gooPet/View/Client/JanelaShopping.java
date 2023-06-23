@@ -1,7 +1,14 @@
 package com.gooPet.View.Client;
 
+import com.gooPet.Auth.Database.DatabaseManager;
 import com.gooPet.Com.Database.ComercialDatabaseManager;
+import com.gooPet.Com.Database.Entities.Cart;
+import com.gooPet.Com.Database.Entities.CartProduct;
 import com.gooPet.Com.Database.Entities.Product;
+import com.gooPet.Command.AddProductCommand;
+import com.gooPet.Command.CartManager;
+import com.gooPet.Command.Command;
+import com.gooPet.Command.UpdateProductCommand;
 import com.gooPet.Service.ImageUpdateService;
 import com.gooPet.View.Janela;
 import com.gooPet.View.ReturnMessagePane;
@@ -13,6 +20,8 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,53 +38,27 @@ import javax.swing.table.DefaultTableModel;
 public class JanelaShopping extends javax.swing.JPanel {
 
     private ComercialDatabaseManager banco;
+    private DatabaseManager bancoAuth;
     private ImageUpdateService image; 
     private List <Product> listaProdutos;
+    private Cart carrinho;
+    private CartProduct cartProduct;
+    private Command command;
+    private CartManager cartManager;
     
     public JanelaShopping(String actualUserName) throws IOException {
         initComponents();
         lb_ActualUser.setText(actualUserName);
         banco = ComercialDatabaseManager.getInstance();
+        bancoAuth = DatabaseManager.getInstance();
+        cartManager = new CartManager();
         atualizaTabela();
+        buscaCarrinho();
+        atualizaNumeroCarrinho();
         
         setColor(btn_Shopping); 
         ind_3.setOpaque(true);
         resetColor(new JPanel[]{btn_Carrinho,btn_Home,btn_4, btn_JanelaSettings}, new JPanel[]{ind_2,ind_1, ind_4, ind_5});
-        
-//        ajeitaImagem();
-//        testeImagem();
-    }
-    
-    public void testeImagem() throws IOException{
-        lb_ProductImage.setText("");
-        lb_ProductImage.setIcon(new javax.swing.ImageIcon(".\\images\\Teste2.jpg"));
-        
-        lb_ProductName.setText("Jogo do Bicho");
-        lb_ProductMarca.setText("Caixa Econômica Federal");
-        lb_ProductValue.setText("R$ 3,00");
-    }
-    
-    public void ajeitaImagem() {
-        try {
-            BufferedImage originalImage = ImageIO.read(new File(".\\images\\Teste.jpg"));
-            int newWidth = 470;
-            int newHeight = 370;
-            BufferedImage resizedImage = resizeImage(originalImage, newWidth, newHeight);
-            File outputFile = new File(".\\images\\Teste2.jpg");
-            ImageIO.write(resizedImage, "jpg", outputFile);
-            System.out.println("Imagem redimensionada com sucesso!");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    private static BufferedImage resizeImage(BufferedImage originalImage, int newWidth, int newHeight) {
-        BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, originalImage.getType());
-        Graphics2D g2d = resizedImage.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2d.drawImage(originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH), 0, 0, null);
-        g2d.dispose();
-        return resizedImage;
     }
     
     public void gotoJanelaAgendaHorario(){
@@ -697,19 +680,37 @@ public class JanelaShopping extends javax.swing.JPanel {
         }
     }
     
+    public void buscaCarrinho(){
+        carrinho = banco.getCartByUser(bancoAuth.getUserByEmail(lb_ActualUser.getText()));
+        if (carrinho == null){
+            Cart cart = new Cart(bancoAuth.getUserByEmail(lb_ActualUser.getText()), 0, 0, null, new Date());
+            banco.createCart(cart);
+        }
+    }
+    
+    public void atualizaNumeroCarrinho(){
+        int number = banco.getNumberProductsInCart(carrinho);
+        lb_Carrinho.setText("Carrinho(" + number + ")");
+    }
+    
     public void pesquisa(){
-        limpaCampos();
-        String textoPesquisa = tf_Pesquisar.getText();
-        //Atualiza tabela
-        ((DefaultTableModel) tb_Produtos.getModel()).setRowCount(0);
-        //Busca Produtos
-        listaProdutos = banco.productSearch(textoPesquisa);
-        for (Product produto : listaProdutos) {
-           ((DefaultTableModel) tb_Produtos.getModel()).addRow(new Object[]{
-            produto.getNome(),
-            produto.getMarca(),
-            "R$ " + produto.getValor()
-        }); 
+        if (tf_Pesquisar.getText().isEmpty()) {
+            ReturnMessagePane.errorPainel("Insira um texto para pesquisar.");
+        } else {
+            limpaCampos();
+            String textoPesquisa = tf_Pesquisar.getText();
+            //Atualiza tabela
+            ((DefaultTableModel) tb_Produtos.getModel()).setRowCount(0);
+            //Busca Produtos
+            listaProdutos = banco.productSearch(textoPesquisa);
+            for (Product produto : listaProdutos) {
+               ((DefaultTableModel) tb_Produtos.getModel()).addRow(new Object[]{
+                produto.getNome(),
+                produto.getMarca(),
+                "R$ " + produto.getValor()
+            }); 
+            }
+            ReturnMessagePane.informationPainel("Pesquisa concluída com sucesso.");
         }
     }
     
@@ -738,6 +739,28 @@ public class JanelaShopping extends javax.swing.JPanel {
                 lb_ProductImage.setIcon(null);
                 lb_ProductImage.setIcon(new javax.swing.ImageIcon("." + produto.getImagem()));
             }
+        }
+    }
+    
+    public void adicionaProdutoCarrinho(){
+        if (Integer.parseInt(sp_Quantidade.getValue().toString()) > 0) {
+            String nome, marca;
+            nome = lb_ProductName.getText();
+            marca = lb_ProductMarca.getText();
+            //Busca Dados Carrinho
+            buscaCarrinho();
+            //Insere novo produto
+            for (Product produto : listaProdutos) {
+                if (produto.getNome().equals(nome) && produto.getMarca().equals(marca)) {
+                    cartProduct = new CartProduct(carrinho, produto,Integer.parseInt(sp_Quantidade.getValue().toString()));
+                    command = new AddProductCommand(carrinho, cartProduct);
+                    cartManager.setCommand(command);
+                    cartManager.executeCommand();
+                    atualizaNumeroCarrinho();
+                }
+            }
+        } else {
+            ReturnMessagePane.errorPainel("O número de produtos deve ser maior do que zero.");
         }
     }
     
@@ -822,7 +845,7 @@ public class JanelaShopping extends javax.swing.JPanel {
     }//GEN-LAST:event_jPanel2MousePressed
 
     private void bt_AdicionarAoCarrinhoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_AdicionarAoCarrinhoActionPerformed
-        
+        adicionaProdutoCarrinho();
     }//GEN-LAST:event_bt_AdicionarAoCarrinhoActionPerformed
 
     private void bt_AtualizarTabelaProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_AtualizarTabelaProdutosActionPerformed
