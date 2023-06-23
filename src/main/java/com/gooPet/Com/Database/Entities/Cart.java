@@ -2,7 +2,6 @@ package com.gooPet.Com.Database.Entities;
 
 import com.gooPet.Auth.Database.Entities.User;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,9 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -39,6 +36,9 @@ public class Cart {
     @Column(name = "isClosed")
     private int isClosed;
     
+    @Column(name = "ValorTotal", columnDefinition = "decimal(18, 2)")
+    private double valorTotal;
+    
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "CloseDate")
     private Date closeDate;
@@ -51,9 +51,10 @@ public class Cart {
         
     }
 
-    public Cart(User user, int isClosed, Date closeDate, Date insertDate) {
+    public Cart(User user, int isClosed, double valorTotal, Date closeDate, Date insertDate) {
         this.user = user;
         this.isClosed = isClosed;
+        this.valorTotal = valorTotal;
         this.closeDate = closeDate;
         this.insertDate = insertDate;
     }
@@ -72,6 +73,14 @@ public class Cart {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public double getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
     }
     
     public int getIsClosed() {

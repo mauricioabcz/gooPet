@@ -1,6 +1,7 @@
 package com.gooPet.View.Client;
 
 import com.gooPet.View.Janela;
+import com.gooPet.View.ReturnMessagePane;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class JanelaAgendaHorario extends javax.swing.JPanel {
         
         setColor(btn_4); 
         ind_4.setOpaque(true);
-        resetColor(new JPanel[]{btn_JanelaRelatorios,btn_Home,btn_JanelaShopping, btn_JanelaSettings}, new JPanel[]{ind_2,ind_1, ind_3, ind_5});
+        resetColor(new JPanel[]{btn_Carrinho,btn_Home,btn_JanelaShopping, btn_JanelaSettings}, new JPanel[]{ind_2,ind_1, ind_3, ind_5});
         
     }
     
@@ -35,6 +36,19 @@ public class JanelaAgendaHorario extends javax.swing.JPanel {
         janela.setLocationRelativeTo(null);
     }
     
+    public void gotoJanelaCarrinho() throws IOException{
+        Janela.p7 = new JanelaCarrinho(lb_ActualUser.getText());
+        JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p4);
+        janela.getContentPane().remove(Janela.p4);
+        janela.add(Janela.p7, BorderLayout.CENTER);
+        janela.pack();
+        janela.setLocationRelativeTo(null);
+    }
+    
+    public void emObras(){
+        ReturnMessagePane.informationPainel("Função em desenvolvimento.");
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -43,7 +57,7 @@ public class JanelaAgendaHorario extends javax.swing.JPanel {
         btn_Home = new javax.swing.JPanel();
         ind_1 = new javax.swing.JPanel();
         lb_Home = new javax.swing.JLabel();
-        btn_JanelaRelatorios = new javax.swing.JPanel();
+        btn_Carrinho = new javax.swing.JPanel();
         ind_2 = new javax.swing.JPanel();
         lb_Carrinho = new javax.swing.JLabel();
         btn_JanelaShopping = new javax.swing.JPanel();
@@ -136,10 +150,10 @@ public class JanelaAgendaHorario extends javax.swing.JPanel {
 
         side_pane.add(btn_Home, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 120, -1));
 
-        btn_JanelaRelatorios.setBackground(new java.awt.Color(23, 35, 51));
-        btn_JanelaRelatorios.addMouseListener(new java.awt.event.MouseAdapter() {
+        btn_Carrinho.setBackground(new java.awt.Color(23, 35, 51));
+        btn_Carrinho.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                btn_JanelaRelatoriosMouseReleased(evt);
+                btn_CarrinhoMouseReleased(evt);
             }
         });
 
@@ -160,28 +174,28 @@ public class JanelaAgendaHorario extends javax.swing.JPanel {
         lb_Carrinho.setForeground(new java.awt.Color(255, 255, 255));
         lb_Carrinho.setText("Carrinho");
 
-        javax.swing.GroupLayout btn_JanelaRelatoriosLayout = new javax.swing.GroupLayout(btn_JanelaRelatorios);
-        btn_JanelaRelatorios.setLayout(btn_JanelaRelatoriosLayout);
-        btn_JanelaRelatoriosLayout.setHorizontalGroup(
-            btn_JanelaRelatoriosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btn_JanelaRelatoriosLayout.createSequentialGroup()
+        javax.swing.GroupLayout btn_CarrinhoLayout = new javax.swing.GroupLayout(btn_Carrinho);
+        btn_Carrinho.setLayout(btn_CarrinhoLayout);
+        btn_CarrinhoLayout.setHorizontalGroup(
+            btn_CarrinhoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btn_CarrinhoLayout.createSequentialGroup()
                 .addComponent(ind_2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35)
                 .addComponent(lb_Carrinho)
                 .addGap(0, 36, Short.MAX_VALUE))
         );
-        btn_JanelaRelatoriosLayout.setVerticalGroup(
-            btn_JanelaRelatoriosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btn_JanelaRelatoriosLayout.createSequentialGroup()
+        btn_CarrinhoLayout.setVerticalGroup(
+            btn_CarrinhoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btn_CarrinhoLayout.createSequentialGroup()
                 .addComponent(ind_2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(btn_JanelaRelatoriosLayout.createSequentialGroup()
+            .addGroup(btn_CarrinhoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lb_Carrinho, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        side_pane.add(btn_JanelaRelatorios, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 220, 120, -1));
+        side_pane.add(btn_Carrinho, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 220, 120, -1));
 
         btn_JanelaShopping.setBackground(new java.awt.Color(23, 35, 51));
         btn_JanelaShopping.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -663,23 +677,27 @@ public class JanelaAgendaHorario extends javax.swing.JPanel {
         // TODO add your handling code here:
         setColor(btn_Home);
         ind_1.setOpaque(true);
-        resetColor(new JPanel[]{btn_JanelaRelatorios,btn_JanelaShopping,btn_4, btn_JanelaSettings}, new JPanel[]{ind_2,ind_3, ind_4, ind_5});
-        //gotoJanelaHome();
+        resetColor(new JPanel[]{btn_Carrinho,btn_JanelaShopping,btn_4, btn_JanelaSettings}, new JPanel[]{ind_2,ind_3, ind_4, ind_5});
+        emObras();
     }//GEN-LAST:event_btn_HomeMousePressed
 
-    private void btn_JanelaRelatoriosMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_JanelaRelatoriosMouseReleased
+    private void btn_CarrinhoMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_CarrinhoMouseReleased
         // TODO add your handling code here:
-        setColor(btn_JanelaRelatorios);
+        setColor(btn_Carrinho);
         ind_2.setOpaque(true);
         resetColor(new JPanel[]{btn_Home,btn_JanelaShopping,btn_4, btn_JanelaSettings}, new JPanel[]{ind_1,ind_3, ind_4, ind_5});
-        //gotoJanelaRelatorios();
-    }//GEN-LAST:event_btn_JanelaRelatoriosMouseReleased
+        try {
+            gotoJanelaCarrinho();
+        } catch (IOException ex) {
+            Logger.getLogger(JanelaAgendaHorario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_CarrinhoMouseReleased
 
     private void btn_JanelaShoppingMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_JanelaShoppingMousePressed
         // TODO add your handling code here:
         setColor(btn_JanelaShopping);
         ind_3.setOpaque(true);
-        resetColor(new JPanel[]{btn_JanelaRelatorios,btn_Home,btn_4, btn_JanelaSettings}, new JPanel[]{ind_2,ind_1, ind_4, ind_5});
+        resetColor(new JPanel[]{btn_Carrinho,btn_Home,btn_4, btn_JanelaSettings}, new JPanel[]{ind_2,ind_1, ind_4, ind_5});
         try {
             gotoJanelaShopping();
         } catch (IOException ex) {
@@ -691,15 +709,16 @@ public class JanelaAgendaHorario extends javax.swing.JPanel {
         // TODO add your handling code here:
         setColor(btn_4);
         ind_4.setOpaque(true);
-        resetColor(new JPanel[]{btn_JanelaRelatorios,btn_JanelaShopping,btn_Home, btn_JanelaSettings}, new JPanel[]{ind_2,ind_3, ind_1, ind_5});
+        resetColor(new JPanel[]{btn_Carrinho,btn_JanelaShopping,btn_Home, btn_JanelaSettings}, new JPanel[]{ind_2,ind_3, ind_1, ind_5});
+        emObras();
     }//GEN-LAST:event_btn_4MousePressed
 
     private void btn_JanelaSettingsMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_JanelaSettingsMouseReleased
         // TODO add your handling code here:
         setColor(btn_JanelaSettings);
         ind_5.setOpaque(true);
-        resetColor(new JPanel[]{btn_Home,btn_JanelaShopping,btn_4, btn_JanelaRelatorios}, new JPanel[]{ind_1,ind_3, ind_4, ind_2});
-        //ReturnMessagePane.informationPainel(Janela.traducao.getString("alert_EmObras"));
+        resetColor(new JPanel[]{btn_Home,btn_JanelaShopping,btn_4, btn_Carrinho}, new JPanel[]{ind_1,ind_3, ind_4, ind_2});
+        emObras();
     }//GEN-LAST:event_btn_JanelaSettingsMouseReleased
 
     private void lb_LogoutMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_LogoutMousePressed
@@ -723,41 +742,39 @@ public class JanelaAgendaHorario extends javax.swing.JPanel {
     }//GEN-LAST:event_jPanel2MousePressed
 
     private void bt_DesceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_DesceActionPerformed
-        
+        emObras();
     }//GEN-LAST:event_bt_DesceActionPerformed
 
     private void bt_AtualizarMeusHorariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_AtualizarMeusHorariosActionPerformed
-        
+        emObras();
     }//GEN-LAST:event_bt_AtualizarMeusHorariosActionPerformed
 
     private void bt_SalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_SalvarActionPerformed
-        
+        emObras();
     }//GEN-LAST:event_bt_SalvarActionPerformed
 
     private void bt_SolicitarAgendamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_SolicitarAgendamentoActionPerformed
-        
+        emObras();
     }//GEN-LAST:event_bt_SolicitarAgendamentoActionPerformed
 
     private void bt_LimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_LimparActionPerformed
-        
+        emObras();
     }//GEN-LAST:event_bt_LimparActionPerformed
 
     private void bt_AtualizarTabelaHorariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_AtualizarTabelaHorariosActionPerformed
-       
+       emObras();
     }//GEN-LAST:event_bt_AtualizarTabelaHorariosActionPerformed
 
     private void tb_HorariosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tb_HorariosKeyReleased
-        //        selecionarVeiculo();
-        //        atualizaVinculoComTransportadores();
+        emObras();
     }//GEN-LAST:event_tb_HorariosKeyReleased
 
     private void tb_HorariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tb_HorariosMouseClicked
-        //        selecionarVeiculo();
-        //        atualizaVinculoComTransportadores();
+        emObras();
     }//GEN-LAST:event_tb_HorariosMouseClicked
 
     private void bt_PesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_PesquisarActionPerformed
-        // TODO add your handling code here:
+        emObras();
     }//GEN-LAST:event_bt_PesquisarActionPerformed
 
     int xx, xy;
@@ -786,8 +803,8 @@ public class JanelaAgendaHorario extends javax.swing.JPanel {
     private javax.swing.JButton bt_Salvar;
     private javax.swing.JButton bt_SolicitarAgendamento;
     private javax.swing.JPanel btn_4;
+    private javax.swing.JPanel btn_Carrinho;
     private javax.swing.JPanel btn_Home;
-    private javax.swing.JPanel btn_JanelaRelatorios;
     private javax.swing.JPanel btn_JanelaSettings;
     private javax.swing.JPanel btn_JanelaShopping;
     private javax.swing.JComboBox<String> cb_Pet;

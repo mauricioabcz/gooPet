@@ -1,6 +1,10 @@
 package com.gooPet.View.Client;
 
+import com.gooPet.Com.Database.ComercialDatabaseManager;
+import com.gooPet.Com.Database.Entities.Product;
+import com.gooPet.Service.ImageUpdateService;
 import com.gooPet.View.Janela;
+import com.gooPet.View.ReturnMessagePane;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -9,10 +13,14 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.imageio.ImageIO;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -20,16 +28,22 @@ import javax.imageio.ImageIO;
  */
 public class JanelaShopping extends javax.swing.JPanel {
 
+    private ComercialDatabaseManager banco;
+    private ImageUpdateService image; 
+    private List <Product> listaProdutos;
+    
     public JanelaShopping(String actualUserName) throws IOException {
         initComponents();
         lb_ActualUser.setText(actualUserName);
+        banco = ComercialDatabaseManager.getInstance();
+        atualizaTabela();
         
         setColor(btn_Shopping); 
         ind_3.setOpaque(true);
-        resetColor(new JPanel[]{btn_JanelaRelatorios,btn_Home,btn_4, btn_JanelaSettings}, new JPanel[]{ind_2,ind_1, ind_4, ind_5});
+        resetColor(new JPanel[]{btn_Carrinho,btn_Home,btn_4, btn_JanelaSettings}, new JPanel[]{ind_2,ind_1, ind_4, ind_5});
         
-        ajeitaImagem();
-        testeImagem();
+//        ajeitaImagem();
+//        testeImagem();
     }
     
     public void testeImagem() throws IOException{
@@ -43,43 +57,24 @@ public class JanelaShopping extends javax.swing.JPanel {
     
     public void ajeitaImagem() {
         try {
-            // Carrega a imagem original
             BufferedImage originalImage = ImageIO.read(new File(".\\images\\Teste.jpg"));
-
-            // Define a nova largura e altura desejadas
             int newWidth = 470;
             int newHeight = 370;
-
-            // Redimensiona a imagem
             BufferedImage resizedImage = resizeImage(originalImage, newWidth, newHeight);
-
-            // Salva a imagem redimensionada em um arquivo
             File outputFile = new File(".\\images\\Teste2.jpg");
             ImageIO.write(resizedImage, "jpg", outputFile);
-
             System.out.println("Imagem redimensionada com sucesso!");
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     
     private static BufferedImage resizeImage(BufferedImage originalImage, int newWidth, int newHeight) {
-        // Cria um BufferedImage com as dimensões desejadas
         BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, originalImage.getType());
-
-        // Obtém o objeto Graphics2D para desenhar na imagem redimensionada
         Graphics2D g2d = resizedImage.createGraphics();
-
-        // Aplica renderização suave para melhor qualidade de redimensionamento
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-
-        // Desenha a imagem original redimensionada no BufferedImage
         g2d.drawImage(originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH), 0, 0, null);
-
-        // Libera os recursos do objeto Graphics2D
         g2d.dispose();
-
         return resizedImage;
     }
     
@@ -92,6 +87,19 @@ public class JanelaShopping extends javax.swing.JPanel {
         janela.setLocationRelativeTo(null);
     }
     
+    public void gotoJanelaCarrinho() throws IOException{
+        Janela.p7 = new JanelaCarrinho(lb_ActualUser.getText());
+        JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p5);
+        janela.getContentPane().remove(Janela.p5);
+        janela.add(Janela.p7, BorderLayout.CENTER);
+        janela.pack();
+        janela.setLocationRelativeTo(null);
+    }
+    
+    public void emObras(){
+        ReturnMessagePane.informationPainel("Função em desenvolvimento.");
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -100,7 +108,7 @@ public class JanelaShopping extends javax.swing.JPanel {
         btn_Home = new javax.swing.JPanel();
         ind_1 = new javax.swing.JPanel();
         lb_Home = new javax.swing.JLabel();
-        btn_JanelaRelatorios = new javax.swing.JPanel();
+        btn_Carrinho = new javax.swing.JPanel();
         ind_2 = new javax.swing.JPanel();
         lb_Carrinho = new javax.swing.JLabel();
         btn_Shopping = new javax.swing.JPanel();
@@ -121,7 +129,7 @@ public class JanelaShopping extends javax.swing.JPanel {
         lb_Produtos = new javax.swing.JLabel();
         lb_Nome = new javax.swing.JLabel();
         bt_Pesquisar = new javax.swing.JButton();
-        tf_Pesquisa = new javax.swing.JTextField();
+        tf_Pesquisar = new javax.swing.JTextField();
         lb_ProductName = new javax.swing.JLabel();
         lb_ProductValue = new javax.swing.JLabel();
         sp_Quantidade = new javax.swing.JSpinner();
@@ -129,8 +137,9 @@ public class JanelaShopping extends javax.swing.JPanel {
         pn_ProductImage = new javax.swing.JPanel();
         lb_ProductImage = new javax.swing.JLabel();
         lb_ProductName1 = new javax.swing.JLabel();
-        lb_ProductName2 = new javax.swing.JLabel();
+        lb_Total = new javax.swing.JLabel();
         lb_Nome1 = new javax.swing.JLabel();
+        bt_Limpar = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         lb_Logout = new javax.swing.JLabel();
@@ -187,10 +196,10 @@ public class JanelaShopping extends javax.swing.JPanel {
 
         side_pane.add(btn_Home, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 120, -1));
 
-        btn_JanelaRelatorios.setBackground(new java.awt.Color(23, 35, 51));
-        btn_JanelaRelatorios.addMouseListener(new java.awt.event.MouseAdapter() {
+        btn_Carrinho.setBackground(new java.awt.Color(23, 35, 51));
+        btn_Carrinho.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                btn_JanelaRelatoriosMouseReleased(evt);
+                btn_CarrinhoMouseReleased(evt);
             }
         });
 
@@ -211,28 +220,28 @@ public class JanelaShopping extends javax.swing.JPanel {
         lb_Carrinho.setForeground(new java.awt.Color(255, 255, 255));
         lb_Carrinho.setText("Carrinho");
 
-        javax.swing.GroupLayout btn_JanelaRelatoriosLayout = new javax.swing.GroupLayout(btn_JanelaRelatorios);
-        btn_JanelaRelatorios.setLayout(btn_JanelaRelatoriosLayout);
-        btn_JanelaRelatoriosLayout.setHorizontalGroup(
-            btn_JanelaRelatoriosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btn_JanelaRelatoriosLayout.createSequentialGroup()
+        javax.swing.GroupLayout btn_CarrinhoLayout = new javax.swing.GroupLayout(btn_Carrinho);
+        btn_Carrinho.setLayout(btn_CarrinhoLayout);
+        btn_CarrinhoLayout.setHorizontalGroup(
+            btn_CarrinhoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btn_CarrinhoLayout.createSequentialGroup()
                 .addComponent(ind_2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35)
                 .addComponent(lb_Carrinho)
                 .addGap(0, 36, Short.MAX_VALUE))
         );
-        btn_JanelaRelatoriosLayout.setVerticalGroup(
-            btn_JanelaRelatoriosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btn_JanelaRelatoriosLayout.createSequentialGroup()
+        btn_CarrinhoLayout.setVerticalGroup(
+            btn_CarrinhoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btn_CarrinhoLayout.createSequentialGroup()
                 .addComponent(ind_2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(btn_JanelaRelatoriosLayout.createSequentialGroup()
+            .addGroup(btn_CarrinhoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lb_Carrinho, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        side_pane.add(btn_JanelaRelatorios, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 220, 120, -1));
+        side_pane.add(btn_Carrinho, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 220, 120, -1));
 
         btn_Shopping.setBackground(new java.awt.Color(23, 35, 51));
         btn_Shopping.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -456,6 +465,17 @@ public class JanelaShopping extends javax.swing.JPanel {
         lb_ProductValue.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lb_ProductValue.setText("<Product_Value>");
 
+        sp_Quantidade.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                sp_QuantidadeStateChanged(evt);
+            }
+        });
+        sp_Quantidade.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                sp_QuantidadeKeyReleased(evt);
+            }
+        });
+
         lb_ProductMarca.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lb_ProductMarca.setText("<Product_Marca>");
 
@@ -484,10 +504,20 @@ public class JanelaShopping extends javax.swing.JPanel {
         lb_ProductName1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lb_ProductName1.setText("Total:");
 
-        lb_ProductName2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lb_ProductName2.setText("<Valor_Total>");
+        lb_Total.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lb_Total.setText("<Valor_Total>");
 
         lb_Nome1.setText("Imagem do produto:");
+
+        bt_Limpar.setBackground(new java.awt.Color(255, 255, 255));
+        bt_Limpar.setText("Limpar");
+        bt_Limpar.setFocusPainted(false);
+        bt_Limpar.setFocusable(false);
+        bt_Limpar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt_LimparActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -500,7 +530,7 @@ public class JanelaShopping extends javax.swing.JPanel {
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(lb_Nome)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tf_Pesquisa)
+                        .addComponent(tf_Pesquisar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(bt_Pesquisar))
                     .addGroup(jPanel6Layout.createSequentialGroup()
@@ -519,8 +549,10 @@ public class JanelaShopping extends javax.swing.JPanel {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                                 .addComponent(lb_ProductName1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lb_ProductName2)
+                                .addComponent(lb_Total)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(bt_Limpar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(bt_AdicionarAoCarrinho))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                                 .addComponent(lb_ProductName)
@@ -545,7 +577,7 @@ public class JanelaShopping extends javax.swing.JPanel {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lb_Nome)
                     .addComponent(bt_Pesquisar)
-                    .addComponent(tf_Pesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tf_Pesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lb_Nome1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -564,7 +596,8 @@ public class JanelaShopping extends javax.swing.JPanel {
                     .addComponent(bt_AtualizarTabelaProdutos)
                     .addComponent(bt_AdicionarAoCarrinho)
                     .addComponent(lb_ProductName1)
-                    .addComponent(lb_ProductName2))
+                    .addComponent(lb_Total)
+                    .addComponent(bt_Limpar))
                 .addContainerGap())
         );
 
@@ -648,35 +681,115 @@ public class JanelaShopping extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    public void atualizaTabela(){
+        limpaCampos();
+        //Atualiza tabela
+        ((DefaultTableModel) tb_Produtos.getModel()).setRowCount(0);
+        //Busca Produtos
+        listaProdutos = banco.getProducts();
+        for (Product produto : listaProdutos) {
+           ((DefaultTableModel) tb_Produtos.getModel()).addRow(new Object[]{
+            produto.getNome(),
+            produto.getMarca(),
+            "R$ " + produto.getValor()
+        }); 
+        }
+    }
+    
+    public void pesquisa(){
+        limpaCampos();
+        String textoPesquisa = tf_Pesquisar.getText();
+        //Atualiza tabela
+        ((DefaultTableModel) tb_Produtos.getModel()).setRowCount(0);
+        //Busca Produtos
+        listaProdutos = banco.productSearch(textoPesquisa);
+        for (Product produto : listaProdutos) {
+           ((DefaultTableModel) tb_Produtos.getModel()).addRow(new Object[]{
+            produto.getNome(),
+            produto.getMarca(),
+            "R$ " + produto.getValor()
+        }); 
+        }
+    }
+    
+    public void limpaCampos(){
+        lb_ProductImage.setIcon(null);
+        lb_ProductImage.setText("<Product_Image>");
+        lb_ProductName.setText("");
+        lb_ProductMarca.setText("");
+        lb_ProductValue.setText("");
+        sp_Quantidade.setValue(0);
+        lb_Total.setText("0.00");
+    }
+    
+    public void preencheProduto(){
+        String nome, marca;
+        nome = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,0).toString();
+        marca = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,1).toString();
+        for (Product produto : listaProdutos) {
+            if (produto.getNome().equals(nome) && produto.getMarca().equals(marca)) {
+                lb_ProductName.setText(produto.getNome());
+                lb_ProductMarca.setText(produto.getMarca());
+                lb_ProductValue.setText(Double.toString(produto.getValor()));
+                
+                //Processa imagem a ser exibida nessa tela
+                lb_ProductImage.setText("");
+                lb_ProductImage.setIcon(null);
+                lb_ProductImage.setIcon(new javax.swing.ImageIcon("." + produto.getImagem()));
+            }
+        }
+    }
+    
+    public void processaImagem(String imagePath, String imageName, String imageType, int width, int height){
+        image = ImageUpdateService.getInstance();
+        image.ajeitaImagem(imagePath, imageName, imageType, width, height);
+    }
+    
+    public void calculaTotal() {
+        if (!lb_ProductValue.getText().equals("")) {
+            int qtde = Integer.parseInt(sp_Quantidade.getValue().toString());
+            double valor = Double.parseDouble(lb_ProductValue.getText());
+            double total = qtde * valor;
+
+            String totalFormatted = String.format("%.2f", total);
+
+            lb_Total.setText(totalFormatted);
+        }
+    }
+    
     private void btn_HomeMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_HomeMousePressed
         // TODO add your handling code here:
         setColor(btn_Home);
         ind_1.setOpaque(true);
-        resetColor(new JPanel[]{btn_JanelaRelatorios,btn_Shopping,btn_4, btn_JanelaSettings}, new JPanel[]{ind_2,ind_3, ind_4, ind_5});
-        //gotoJanelaHome();
+        resetColor(new JPanel[]{btn_Carrinho,btn_Shopping,btn_4, btn_JanelaSettings}, new JPanel[]{ind_2,ind_3, ind_4, ind_5});
+        emObras();
     }//GEN-LAST:event_btn_HomeMousePressed
 
-    private void btn_JanelaRelatoriosMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_JanelaRelatoriosMouseReleased
+    private void btn_CarrinhoMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_CarrinhoMouseReleased
         // TODO add your handling code here:
-        setColor(btn_JanelaRelatorios);
+        setColor(btn_Carrinho);
         ind_2.setOpaque(true);
         resetColor(new JPanel[]{btn_Home,btn_Shopping,btn_4, btn_JanelaSettings}, new JPanel[]{ind_1,ind_3, ind_4, ind_5});
-        //gotoJanelaRelatorios();
-    }//GEN-LAST:event_btn_JanelaRelatoriosMouseReleased
+        try {
+            gotoJanelaCarrinho();
+        } catch (IOException ex) {
+            Logger.getLogger(JanelaShopping.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_CarrinhoMouseReleased
 
     private void btn_ShoppingMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_ShoppingMousePressed
         // TODO add your handling code here:
         setColor(btn_Shopping);
         ind_3.setOpaque(true);
-        resetColor(new JPanel[]{btn_JanelaRelatorios,btn_Home,btn_4, btn_JanelaSettings}, new JPanel[]{ind_2,ind_1, ind_4, ind_5});
-        //gotoJanelaCadastros();
+        resetColor(new JPanel[]{btn_Carrinho,btn_Home,btn_4, btn_JanelaSettings}, new JPanel[]{ind_2,ind_1, ind_4, ind_5});
     }//GEN-LAST:event_btn_ShoppingMousePressed
 
     private void btn_4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_4MousePressed
         // TODO add your handling code here:
         setColor(btn_4);
         ind_4.setOpaque(true);
-        resetColor(new JPanel[]{btn_JanelaRelatorios,btn_Shopping,btn_Home, btn_JanelaSettings}, new JPanel[]{ind_2,ind_3, ind_1, ind_5});
+        resetColor(new JPanel[]{btn_Carrinho,btn_Shopping,btn_Home, btn_JanelaSettings}, new JPanel[]{ind_2,ind_3, ind_1, ind_5});
         gotoJanelaAgendaHorario();
     }//GEN-LAST:event_btn_4MousePressed
 
@@ -684,8 +797,8 @@ public class JanelaShopping extends javax.swing.JPanel {
         // TODO add your handling code here:
         setColor(btn_JanelaSettings);
         ind_5.setOpaque(true);
-        resetColor(new JPanel[]{btn_Home,btn_Shopping,btn_4, btn_JanelaRelatorios}, new JPanel[]{ind_1,ind_3, ind_4, ind_2});
-        //ReturnMessagePane.informationPainel(Janela.traducao.getString("alert_EmObras"));
+        resetColor(new JPanel[]{btn_Home,btn_Shopping,btn_4, btn_Carrinho}, new JPanel[]{ind_1,ind_3, ind_4, ind_2});
+        emObras();
     }//GEN-LAST:event_btn_JanelaSettingsMouseReleased
 
     private void lb_LogoutMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_LogoutMousePressed
@@ -713,22 +826,32 @@ public class JanelaShopping extends javax.swing.JPanel {
     }//GEN-LAST:event_bt_AdicionarAoCarrinhoActionPerformed
 
     private void bt_AtualizarTabelaProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_AtualizarTabelaProdutosActionPerformed
-       
+        atualizaTabela();
     }//GEN-LAST:event_bt_AtualizarTabelaProdutosActionPerformed
 
     private void tb_ProdutosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tb_ProdutosKeyReleased
-        //        selecionarVeiculo();
-        //        atualizaVinculoComTransportadores();
+        preencheProduto();
     }//GEN-LAST:event_tb_ProdutosKeyReleased
 
     private void tb_ProdutosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tb_ProdutosMouseClicked
-        //        selecionarVeiculo();
-        //        atualizaVinculoComTransportadores();
+        preencheProduto();
     }//GEN-LAST:event_tb_ProdutosMouseClicked
 
     private void bt_PesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_PesquisarActionPerformed
-        // TODO add your handling code here:
+        pesquisa();
     }//GEN-LAST:event_bt_PesquisarActionPerformed
+
+    private void sp_QuantidadeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sp_QuantidadeStateChanged
+        calculaTotal();
+    }//GEN-LAST:event_sp_QuantidadeStateChanged
+
+    private void bt_LimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_LimparActionPerformed
+        limpaCampos();
+    }//GEN-LAST:event_bt_LimparActionPerformed
+
+    private void sp_QuantidadeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_sp_QuantidadeKeyReleased
+        calculaTotal();
+    }//GEN-LAST:event_sp_QuantidadeKeyReleased
 
     int xx, xy;
         private void setColor(JPanel pane)
@@ -750,10 +873,11 @@ public class JanelaShopping extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_AdicionarAoCarrinho;
     private javax.swing.JButton bt_AtualizarTabelaProdutos;
+    private javax.swing.JButton bt_Limpar;
     private javax.swing.JButton bt_Pesquisar;
     private javax.swing.JPanel btn_4;
+    private javax.swing.JPanel btn_Carrinho;
     private javax.swing.JPanel btn_Home;
-    private javax.swing.JPanel btn_JanelaRelatorios;
     private javax.swing.JPanel btn_JanelaSettings;
     private javax.swing.JPanel btn_Shopping;
     private javax.swing.JPanel ind_1;
@@ -777,16 +901,16 @@ public class JanelaShopping extends javax.swing.JPanel {
     private javax.swing.JLabel lb_ProductMarca;
     private javax.swing.JLabel lb_ProductName;
     private javax.swing.JLabel lb_ProductName1;
-    private javax.swing.JLabel lb_ProductName2;
     private javax.swing.JLabel lb_ProductValue;
     private javax.swing.JLabel lb_Produtos;
     private javax.swing.JLabel lb_Settings;
     private javax.swing.JLabel lb_Shopping;
     private javax.swing.JLabel lb_TelaRotasTitle;
+    private javax.swing.JLabel lb_Total;
     private javax.swing.JPanel pn_ProductImage;
     private javax.swing.JPanel side_pane;
     private javax.swing.JSpinner sp_Quantidade;
     private javax.swing.JTable tb_Produtos;
-    private javax.swing.JTextField tf_Pesquisa;
+    private javax.swing.JTextField tf_Pesquisar;
     // End of variables declaration//GEN-END:variables
 }

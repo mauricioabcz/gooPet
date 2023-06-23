@@ -432,11 +432,13 @@
                           <Component id="bt_Pesquisar" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lb_Produtos" min="-2" max="-2" attributes="0"/>
-                              <Component id="bt_AtualizarTabelaProdutos" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="lb_Produtos" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Component id="bt_AtualizarTabelaProdutos" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="bt_Remover" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -455,7 +457,7 @@
                                   <EmptySpace max="32767" attributes="0"/>
                                   <Component id="bt_Limpar" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="bt_AdicionarAoCarrinho" min="-2" max="-2" attributes="0"/>
+                                  <Component id="bt_SalvarCarrinho" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <Component id="lb_ProductName" min="-2" max="-2" attributes="0"/>
@@ -509,10 +511,11 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="bt_AtualizarTabelaProdutos" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="bt_AdicionarAoCarrinho" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="bt_SalvarCarrinho" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lb_ProductName1" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lb_Total" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="bt_Limpar" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="bt_Remover" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -587,17 +590,17 @@
             <Property name="text" type="java.lang.String" value="Detalhes do Produto"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="bt_AdicionarAoCarrinho">
+        <Component class="javax.swing.JButton" name="bt_SalvarCarrinho">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Adicionar ao Carrinho"/>
+            <Property name="text" type="java.lang.String" value="Salvar"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="focusable" type="boolean" value="false"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bt_AdicionarAoCarrinhoActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bt_SalvarCarrinhoActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lb_Produtos">
@@ -727,6 +730,19 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bt_LimparActionPerformed"/>
           </Events>
         </Component>
+        <Component class="javax.swing.JButton" name="bt_Remover">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Remover"/>
+            <Property name="focusPainted" type="boolean" value="false"/>
+            <Property name="focusable" type="boolean" value="false"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bt_RemoverActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="jPanel2">
@@ -805,7 +821,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="PetShop &gt; Shopping"/>
+            <Property name="text" type="java.lang.String" value="PetShop &gt; Carrinho"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="lb_ActualUser">

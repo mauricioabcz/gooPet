@@ -4,11 +4,13 @@ import com.gooPet.Auth.Database.DatabaseManager;
 import com.gooPet.Auth.Security.Security;
 import com.gooPet.Auth.Log.Log;
 import com.gooPet.View.Client.JanelaAgendaHorario;
+import com.gooPet.View.Client.JanelaShopping;
 import com.gooPet.View.Funcionario.JanelaCadastroProdutos;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -54,6 +56,15 @@ public final class JanelaLogin extends javax.swing.JPanel {
         JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p1);
         janela.getContentPane().remove(Janela.p1);
         janela.add((Component) Janela.p4, BorderLayout.CENTER);
+        janela.pack();
+        janela.setLocationRelativeTo(null);
+    }
+    
+    public void gotoJanelaShopping(String actualUserName) throws IOException{
+        Janela.p5 = new JanelaShopping(actualUserName);
+        JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p1);
+        janela.getContentPane().remove(Janela.p1);
+        janela.add((Component) Janela.p5, BorderLayout.CENTER);
         janela.pack();
         janela.setLocationRelativeTo(null);
     }
@@ -108,8 +119,8 @@ public final class JanelaLogin extends javax.swing.JPanel {
                             gotoJanelaCadastroProdutos(email);
                             break;
                         default:
-                            Log.LogAuthenticationComponent("JanelaLogin", "INFO", "Direcionando usuário para a visão de Teste.");
-                            gotoJanelaAgendaHorarioCliente(email);
+                            Log.LogAuthenticationComponent("JanelaLogin", "INFO", "Direcionando usuário para a visão de Cliente.");
+                            gotoJanelaShopping(email);
                             break;
                     }
                     break;

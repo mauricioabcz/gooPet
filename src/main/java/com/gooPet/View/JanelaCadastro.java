@@ -5,6 +5,7 @@ import com.gooPet.Auth.Database.Entities.User;
 import com.gooPet.Auth.Database.Entities.UserType;
 import com.gooPet.Auth.Log.Log;
 import com.gooPet.Auth.Security.Security;
+import com.gooPet.View.Funcionario.JanelaCadastroProdutos;
 import java.awt.BorderLayout;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
@@ -32,6 +33,15 @@ public final class JanelaCadastro extends javax.swing.JPanel {
         getUsers();
     }
 
+    public void gotoJanelaCadastroProdutos(String actualUserName){
+        Janela.p6 = new JanelaCadastroProdutos(actualUserName);
+        JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p2);
+        janela.getContentPane().remove(Janela.p2);
+        janela.add(Janela.p6, BorderLayout.CENTER);
+        janela.pack();
+        janela.setLocationRelativeTo(null);
+    }
+    
     public void logout() throws Exception{
         Janela.p1 = new JanelaLogin();
         JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p2);
@@ -405,6 +415,7 @@ public final class JanelaCadastro extends javax.swing.JPanel {
         bt_ExcluirUser = new javax.swing.JButton();
         pf_EditaSenha = new javax.swing.JPasswordField();
         bt_Sair = new javax.swing.JButton();
+        bt_Voltar = new javax.swing.JButton();
 
         jLabel5.setText("jLabel5");
 
@@ -873,6 +884,15 @@ public final class JanelaCadastro extends javax.swing.JPanel {
             }
         });
 
+        bt_Voltar.setBackground(new java.awt.Color(255, 255, 255));
+        bt_Voltar.setForeground(new java.awt.Color(0, 0, 0));
+        bt_Voltar.setText("Voltar");
+        bt_Voltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt_VoltarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -889,7 +909,8 @@ public final class JanelaCadastro extends javax.swing.JPanel {
                             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(bt_Voltar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(bt_Sair)))
                 .addContainerGap())
         );
@@ -907,7 +928,9 @@ public final class JanelaCadastro extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bt_Sair)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bt_Sair)
+                    .addComponent(bt_Voltar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -993,6 +1016,10 @@ public final class JanelaCadastro extends javax.swing.JPanel {
         preencheUsuario();
     }//GEN-LAST:event_cb_EditaUsersActionPerformed
 
+    private void bt_VoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_VoltarActionPerformed
+        gotoJanelaCadastroProdutos(lb_ActualUser.getText());
+    }//GEN-LAST:event_bt_VoltarActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_AtualizaUser;
@@ -1002,6 +1029,7 @@ public final class JanelaCadastro extends javax.swing.JPanel {
     private javax.swing.JButton bt_ExcluiGrupo;
     private javax.swing.JButton bt_ExcluirUser;
     private javax.swing.JButton bt_Sair;
+    private javax.swing.JButton bt_Voltar;
     private javax.swing.JComboBox<String> cb_CriaGrupo;
     private javax.swing.JComboBox<String> cb_EditaGrupo;
     private javax.swing.JComboBox<String> cb_EditaGrupoUsers;

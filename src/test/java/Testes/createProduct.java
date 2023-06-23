@@ -29,7 +29,7 @@ public class createProduct {
         List<Product> listaProdutos = bancoCom.getProducts();
         List<User> listaUsers = bancoAuth.getUser();
         
-        Cart cart = new Cart(listaUsers.get(0), 0, null, new Date());
+        Cart cart = new Cart(listaUsers.get(0), 0, 3.00, null, new Date());
         bancoCom.createCart(cart);
         
         cart = bancoCom.getCartByUser(listaUsers.get(0));
@@ -76,7 +76,7 @@ public class createProduct {
     }
     
     @Test
-    public void fechaarrinho(){
+    public void fechaCarrinho(){
         ComercialDatabaseManager bancoCom = ComercialDatabaseManager.getInstance();
         DatabaseManager bancoAuth = DatabaseManager.getInstance();
         List<User> listaUsers = bancoAuth.getUser();

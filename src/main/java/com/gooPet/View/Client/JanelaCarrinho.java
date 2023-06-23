@@ -1,54 +1,98 @@
-package com.gooPet.View.Funcionario;
+package com.gooPet.View.Client;
 
 import com.gooPet.Com.Database.ComercialDatabaseManager;
 import com.gooPet.Com.Database.Entities.Product;
 import com.gooPet.Service.ImageUpdateService;
-import com.gooPet.View.Client.*;
 import com.gooPet.View.Janela;
-import com.gooPet.View.JanelaCadastro;
 import com.gooPet.View.ReturnMessagePane;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.imageio.ImageIO;
 import javax.swing.table.DefaultTableModel;
-import java.util.Date;
-import javax.swing.JFileChooser;
 
 /**
  *
  * @author mauricio.rodrigues
  */
-public class JanelaCadastroProdutos extends javax.swing.JPanel {
+public class JanelaCarrinho extends javax.swing.JPanel {
 
     private ComercialDatabaseManager banco;
     private ImageUpdateService image; 
     private List <Product> listaProdutos;
     
-    public JanelaCadastroProdutos(String actualUserName) {
+    public JanelaCarrinho(String actualUserName) throws IOException {
         initComponents();
         lb_ActualUser.setText(actualUserName);
         banco = ComercialDatabaseManager.getInstance();
         atualizaTabela();
         
-        setColor(btn_4); 
-        ind_4.setOpaque(true);
-        resetColor(new JPanel[]{btn_JanelaRelatorios,btn_Home,btn_JanelaShopping, btn_JanelaSettings}, new JPanel[]{ind_2,ind_1, ind_3, ind_5});
+        setColor(btn_Carrinho); 
+        ind_2.setOpaque(true);
+        resetColor(new JPanel[]{btn_Shopping,btn_Home,btn_4, btn_JanelaSettings}, new JPanel[]{ind_3,ind_1, ind_4, ind_5});
         
+//        ajeitaImagem();
+//        testeImagem();
     }
     
-    public void gotoJanelaCadastro(String actualUserName){
-        Janela.p2 = new JanelaCadastro(actualUserName);
-        JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p6);
-        janela.getContentPane().remove(Janela.p6);
-        janela.add(Janela.p2, BorderLayout.CENTER);
+    public void testeImagem() throws IOException{
+        lb_ProductImage.setText("");
+        lb_ProductImage.setIcon(new javax.swing.ImageIcon(".\\images\\Teste2.jpg"));
+        
+        lb_ProductName.setText("Jogo do Bicho");
+        lb_ProductMarca.setText("Caixa Econômica Federal");
+        lb_ProductValue.setText("R$ 3,00");
+    }
+    
+    public void ajeitaImagem() {
+        try {
+            BufferedImage originalImage = ImageIO.read(new File(".\\images\\Teste.jpg"));
+            int newWidth = 470;
+            int newHeight = 370;
+            BufferedImage resizedImage = resizeImage(originalImage, newWidth, newHeight);
+            File outputFile = new File(".\\images\\Teste2.jpg");
+            ImageIO.write(resizedImage, "jpg", outputFile);
+            System.out.println("Imagem redimensionada com sucesso!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private static BufferedImage resizeImage(BufferedImage originalImage, int newWidth, int newHeight) {
+        BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, originalImage.getType());
+        Graphics2D g2d = resizedImage.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.drawImage(originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH), 0, 0, null);
+        g2d.dispose();
+        return resizedImage;
+    }
+    
+    public void gotoJanelaShopping() throws IOException{
+        Janela.p5 = new JanelaShopping(lb_ActualUser.getText());
+        JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p7);
+        janela.getContentPane().remove(Janela.p7);
+        janela.add((Component) Janela.p5, BorderLayout.CENTER);
+        janela.pack();
+        janela.setLocationRelativeTo(null);
+    }
+    
+    public void gotoJanelaAgendaHorario(){
+        Janela.p4 = new JanelaAgendaHorario(lb_ActualUser.getText());
+        JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p7);
+        janela.getContentPane().remove(Janela.p7);
+        janela.add(Janela.p4, BorderLayout.CENTER);
         janela.pack();
         janela.setLocationRelativeTo(null);
     }
@@ -57,24 +101,18 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
         ReturnMessagePane.informationPainel("Função em desenvolvimento.");
     }
     
-    public void naoAcessivelMesage(){
-        ReturnMessagePane.informationPainel("Função apenas para Clientes.");
-    }
-    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pn_ProductImage = new javax.swing.JPanel();
-        lb_ProductImage = new javax.swing.JLabel();
         side_pane = new javax.swing.JPanel();
         btn_Home = new javax.swing.JPanel();
         ind_1 = new javax.swing.JPanel();
         lb_Home = new javax.swing.JLabel();
-        btn_JanelaRelatorios = new javax.swing.JPanel();
+        btn_Carrinho = new javax.swing.JPanel();
         ind_2 = new javax.swing.JPanel();
         lb_Carrinho = new javax.swing.JLabel();
-        btn_JanelaShopping = new javax.swing.JPanel();
+        btn_Shopping = new javax.swing.JPanel();
         ind_3 = new javax.swing.JPanel();
         lb_Shopping = new javax.swing.JLabel();
         btn_4 = new javax.swing.JPanel();
@@ -86,53 +124,29 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
         jPanel6 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tb_Produtos = new javax.swing.JTable();
-        bt_Atualizar = new javax.swing.JButton();
+        bt_AtualizarTabelaProdutos = new javax.swing.JButton();
         lb_DadosProduto = new javax.swing.JLabel();
-        lb_NomeProduto = new javax.swing.JLabel();
-        lb_MarcaProduto = new javax.swing.JLabel();
-        bt_Limpar = new javax.swing.JButton();
-        bt_Salvar = new javax.swing.JButton();
-        bt_SelecionarImagem = new javax.swing.JButton();
-        lb_ValorProduto = new javax.swing.JLabel();
-        lb_ImagemProduto = new javax.swing.JLabel();
-        tf_ImagemProduto = new javax.swing.JTextField();
-        lb_PesquisarProduto = new javax.swing.JLabel();
-        lb_Data = new javax.swing.JLabel();
+        bt_SalvarCarrinho = new javax.swing.JButton();
+        lb_Produtos = new javax.swing.JLabel();
+        lb_Nome = new javax.swing.JLabel();
         bt_Pesquisar = new javax.swing.JButton();
-        tf_NomeProduto = new javax.swing.JTextField();
-        tf_MarcaProduto = new javax.swing.JTextField();
         tf_Pesquisar = new javax.swing.JTextField();
-        tf_ValorProduto = new javax.swing.JTextField();
-        pn_ImagemProduto = new javax.swing.JPanel();
-        lb_ProductImagem = new javax.swing.JLabel();
+        lb_ProductName = new javax.swing.JLabel();
+        lb_ProductValue = new javax.swing.JLabel();
+        sp_Quantidade = new javax.swing.JSpinner();
+        lb_ProductMarca = new javax.swing.JLabel();
+        pn_ProductImage = new javax.swing.JPanel();
+        lb_ProductImage = new javax.swing.JLabel();
+        lb_ProductName1 = new javax.swing.JLabel();
+        lb_Total = new javax.swing.JLabel();
+        lb_Nome1 = new javax.swing.JLabel();
+        bt_Limpar = new javax.swing.JButton();
         bt_Remover = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         lb_Logout = new javax.swing.JLabel();
         lb_TelaRotasTitle = new javax.swing.JLabel();
         lb_ActualUser = new javax.swing.JLabel();
-
-        lb_ProductImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lb_ProductImage.setText("<Product_Image>");
-        lb_ProductImage.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        lb_ProductImage.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-
-        javax.swing.GroupLayout pn_ProductImageLayout = new javax.swing.GroupLayout(pn_ProductImage);
-        pn_ProductImage.setLayout(pn_ProductImageLayout);
-        pn_ProductImageLayout.setHorizontalGroup(
-            pn_ProductImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pn_ProductImageLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lb_ProductImage, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        pn_ProductImageLayout.setVerticalGroup(
-            pn_ProductImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pn_ProductImageLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lb_ProductImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
 
         side_pane.setBackground(new java.awt.Color(23, 35, 51));
         side_pane.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -184,10 +198,10 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
 
         side_pane.add(btn_Home, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 120, -1));
 
-        btn_JanelaRelatorios.setBackground(new java.awt.Color(23, 35, 51));
-        btn_JanelaRelatorios.addMouseListener(new java.awt.event.MouseAdapter() {
+        btn_Carrinho.setBackground(new java.awt.Color(23, 35, 51));
+        btn_Carrinho.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                btn_JanelaRelatoriosMouseReleased(evt);
+                btn_CarrinhoMouseReleased(evt);
             }
         });
 
@@ -208,33 +222,33 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
         lb_Carrinho.setForeground(new java.awt.Color(255, 255, 255));
         lb_Carrinho.setText("Carrinho");
 
-        javax.swing.GroupLayout btn_JanelaRelatoriosLayout = new javax.swing.GroupLayout(btn_JanelaRelatorios);
-        btn_JanelaRelatorios.setLayout(btn_JanelaRelatoriosLayout);
-        btn_JanelaRelatoriosLayout.setHorizontalGroup(
-            btn_JanelaRelatoriosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btn_JanelaRelatoriosLayout.createSequentialGroup()
+        javax.swing.GroupLayout btn_CarrinhoLayout = new javax.swing.GroupLayout(btn_Carrinho);
+        btn_Carrinho.setLayout(btn_CarrinhoLayout);
+        btn_CarrinhoLayout.setHorizontalGroup(
+            btn_CarrinhoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btn_CarrinhoLayout.createSequentialGroup()
                 .addComponent(ind_2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35)
                 .addComponent(lb_Carrinho)
                 .addGap(0, 36, Short.MAX_VALUE))
         );
-        btn_JanelaRelatoriosLayout.setVerticalGroup(
-            btn_JanelaRelatoriosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btn_JanelaRelatoriosLayout.createSequentialGroup()
+        btn_CarrinhoLayout.setVerticalGroup(
+            btn_CarrinhoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btn_CarrinhoLayout.createSequentialGroup()
                 .addComponent(ind_2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(btn_JanelaRelatoriosLayout.createSequentialGroup()
+            .addGroup(btn_CarrinhoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lb_Carrinho, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        side_pane.add(btn_JanelaRelatorios, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 220, 120, -1));
+        side_pane.add(btn_Carrinho, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 220, 120, -1));
 
-        btn_JanelaShopping.setBackground(new java.awt.Color(23, 35, 51));
-        btn_JanelaShopping.addMouseListener(new java.awt.event.MouseAdapter() {
+        btn_Shopping.setBackground(new java.awt.Color(23, 35, 51));
+        btn_Shopping.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                btn_JanelaShoppingMousePressed(evt);
+                btn_ShoppingMousePressed(evt);
             }
         });
 
@@ -255,28 +269,28 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
         lb_Shopping.setForeground(new java.awt.Color(255, 255, 255));
         lb_Shopping.setText("Shopping");
 
-        javax.swing.GroupLayout btn_JanelaShoppingLayout = new javax.swing.GroupLayout(btn_JanelaShopping);
-        btn_JanelaShopping.setLayout(btn_JanelaShoppingLayout);
-        btn_JanelaShoppingLayout.setHorizontalGroup(
-            btn_JanelaShoppingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btn_JanelaShoppingLayout.createSequentialGroup()
+        javax.swing.GroupLayout btn_ShoppingLayout = new javax.swing.GroupLayout(btn_Shopping);
+        btn_Shopping.setLayout(btn_ShoppingLayout);
+        btn_ShoppingLayout.setHorizontalGroup(
+            btn_ShoppingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btn_ShoppingLayout.createSequentialGroup()
                 .addComponent(ind_3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35)
                 .addComponent(lb_Shopping)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
-        btn_JanelaShoppingLayout.setVerticalGroup(
-            btn_JanelaShoppingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btn_JanelaShoppingLayout.createSequentialGroup()
+        btn_ShoppingLayout.setVerticalGroup(
+            btn_ShoppingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btn_ShoppingLayout.createSequentialGroup()
                 .addComponent(ind_3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(btn_JanelaShoppingLayout.createSequentialGroup()
+            .addGroup(btn_ShoppingLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lb_Shopping, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        side_pane.add(btn_JanelaShopping, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 140, 120, -1));
+        side_pane.add(btn_Shopping, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 140, 120, -1));
 
         btn_4.setBackground(new java.awt.Color(23, 35, 51));
         btn_4.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -347,7 +361,7 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
         );
 
         lb_Settings.setForeground(new java.awt.Color(255, 255, 255));
-        lb_Settings.setText("Usuários");
+        lb_Settings.setText("Settings");
 
         javax.swing.GroupLayout btn_JanelaSettingsLayout = new javax.swing.GroupLayout(btn_JanelaSettings);
         btn_JanelaSettings.setLayout(btn_JanelaSettingsLayout);
@@ -357,7 +371,7 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
                 .addComponent(ind_5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35)
                 .addComponent(lb_Settings)
-                .addGap(0, 37, Short.MAX_VALUE))
+                .addGap(0, 40, Short.MAX_VALUE))
         );
         btn_JanelaSettingsLayout.setVerticalGroup(
             btn_JanelaSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -409,63 +423,33 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
         });
         jScrollPane3.setViewportView(tb_Produtos);
 
-        bt_Atualizar.setBackground(new java.awt.Color(255, 255, 255));
-        bt_Atualizar.setText("Atualizar");
-        bt_Atualizar.setFocusPainted(false);
-        bt_Atualizar.setFocusable(false);
-        bt_Atualizar.addActionListener(new java.awt.event.ActionListener() {
+        bt_AtualizarTabelaProdutos.setBackground(new java.awt.Color(255, 255, 255));
+        bt_AtualizarTabelaProdutos.setText("Atualizar");
+        bt_AtualizarTabelaProdutos.setFocusPainted(false);
+        bt_AtualizarTabelaProdutos.setFocusable(false);
+        bt_AtualizarTabelaProdutos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bt_AtualizarActionPerformed(evt);
+                bt_AtualizarTabelaProdutosActionPerformed(evt);
             }
         });
 
         lb_DadosProduto.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lb_DadosProduto.setText("Dados do Produto");
+        lb_DadosProduto.setText("Detalhes do Produto");
 
-        lb_NomeProduto.setText("Nome:");
-
-        lb_MarcaProduto.setText("Marca");
-
-        bt_Limpar.setBackground(new java.awt.Color(255, 255, 255));
-        bt_Limpar.setText("Limpar");
-        bt_Limpar.setFocusPainted(false);
-        bt_Limpar.setFocusable(false);
-        bt_Limpar.addActionListener(new java.awt.event.ActionListener() {
+        bt_SalvarCarrinho.setBackground(new java.awt.Color(255, 255, 255));
+        bt_SalvarCarrinho.setText("Salvar");
+        bt_SalvarCarrinho.setFocusPainted(false);
+        bt_SalvarCarrinho.setFocusable(false);
+        bt_SalvarCarrinho.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bt_LimparActionPerformed(evt);
+                bt_SalvarCarrinhoActionPerformed(evt);
             }
         });
 
-        bt_Salvar.setBackground(new java.awt.Color(255, 255, 255));
-        bt_Salvar.setText("Salvar");
-        bt_Salvar.setFocusPainted(false);
-        bt_Salvar.setFocusable(false);
-        bt_Salvar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bt_SalvarActionPerformed(evt);
-            }
-        });
+        lb_Produtos.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lb_Produtos.setText("Produtos");
 
-        bt_SelecionarImagem.setBackground(new java.awt.Color(255, 255, 255));
-        bt_SelecionarImagem.setText("Selecionar Imagem");
-        bt_SelecionarImagem.setFocusPainted(false);
-        bt_SelecionarImagem.setFocusable(false);
-        bt_SelecionarImagem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bt_SelecionarImagemActionPerformed(evt);
-            }
-        });
-
-        lb_ValorProduto.setText("Valor:");
-
-        lb_ImagemProduto.setText("Imagem:");
-
-        tf_ImagemProduto.setEditable(false);
-
-        lb_PesquisarProduto.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lb_PesquisarProduto.setText("Pesquisar Produto");
-
-        lb_Data.setText("Data:");
+        lb_Nome.setText("Nome:");
 
         bt_Pesquisar.setBackground(new java.awt.Color(255, 255, 255));
         bt_Pesquisar.setText("Pesquisar");
@@ -477,27 +461,65 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
             }
         });
 
-        lb_ProductImagem.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lb_ProductImagem.setText("<Product_Image>");
-        lb_ProductImagem.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        lb_ProductImagem.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lb_ProductName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lb_ProductName.setText("<Product_Name>");
 
-        javax.swing.GroupLayout pn_ImagemProdutoLayout = new javax.swing.GroupLayout(pn_ImagemProduto);
-        pn_ImagemProduto.setLayout(pn_ImagemProdutoLayout);
-        pn_ImagemProdutoLayout.setHorizontalGroup(
-            pn_ImagemProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pn_ImagemProdutoLayout.createSequentialGroup()
+        lb_ProductValue.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lb_ProductValue.setText("<Product_Value>");
+
+        sp_Quantidade.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                sp_QuantidadeStateChanged(evt);
+            }
+        });
+        sp_Quantidade.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                sp_QuantidadeKeyReleased(evt);
+            }
+        });
+
+        lb_ProductMarca.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lb_ProductMarca.setText("<Product_Marca>");
+
+        lb_ProductImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lb_ProductImage.setText("<Product_Image>");
+        lb_ProductImage.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        lb_ProductImage.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        javax.swing.GroupLayout pn_ProductImageLayout = new javax.swing.GroupLayout(pn_ProductImage);
+        pn_ProductImage.setLayout(pn_ProductImageLayout);
+        pn_ProductImageLayout.setHorizontalGroup(
+            pn_ProductImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pn_ProductImageLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lb_ProductImagem, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
+                .addComponent(lb_ProductImage, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        pn_ImagemProdutoLayout.setVerticalGroup(
-            pn_ImagemProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pn_ImagemProdutoLayout.createSequentialGroup()
+        pn_ProductImageLayout.setVerticalGroup(
+            pn_ProductImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pn_ProductImageLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lb_ProductImagem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lb_ProductImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
+
+        lb_ProductName1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lb_ProductName1.setText("Total:");
+
+        lb_Total.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lb_Total.setText("<Valor_Total>");
+
+        lb_Nome1.setText("Imagem do produto:");
+
+        bt_Limpar.setBackground(new java.awt.Color(255, 255, 255));
+        bt_Limpar.setText("Limpar");
+        bt_Limpar.setFocusPainted(false);
+        bt_Limpar.setFocusable(false);
+        bt_Limpar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt_LimparActionPerformed(evt);
+            }
+        });
 
         bt_Remover.setBackground(new java.awt.Color(255, 255, 255));
         bt_Remover.setText("Remover");
@@ -518,44 +540,45 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 527, Short.MAX_VALUE)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(lb_Data)
+                        .addComponent(lb_Nome)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(tf_Pesquisar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(bt_Pesquisar))
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(lb_PesquisarProduto)
+                        .addComponent(lb_Produtos)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(bt_Atualizar)
+                        .addComponent(bt_AtualizarTabelaProdutos)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(bt_Remover)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(bt_Limpar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 222, Short.MAX_VALUE)
-                        .addComponent(bt_SelecionarImagem)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bt_Salvar))
+                        .addComponent(lb_DadosProduto)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lb_DadosProduto)
+                            .addComponent(pn_ProductImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                                .addComponent(lb_ProductName1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lb_Total)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(bt_Limpar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(bt_SalvarCarrinho))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                                .addComponent(lb_ProductName)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lb_ProductMarca)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lb_ProductValue))
+                            .addComponent(sp_Quantidade)
                             .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lb_ImagemProduto)
-                                    .addComponent(lb_ValorProduto)
-                                    .addComponent(lb_MarcaProduto)
-                                    .addComponent(lb_NomeProduto))
-                                .addGap(3, 3, 3)
-                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(tf_NomeProduto, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE)
-                                    .addComponent(tf_MarcaProduto)
-                                    .addComponent(tf_ImagemProduto)
-                                    .addComponent(tf_ValorProduto)))
-                            .addComponent(pn_ImagemProduto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(12, 12, 12))
+                                .addComponent(lb_Nome1)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -563,42 +586,33 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lb_DadosProduto)
-                    .addComponent(lb_PesquisarProduto))
+                    .addComponent(lb_Produtos))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lb_Nome)
+                    .addComponent(bt_Pesquisar)
+                    .addComponent(tf_Pesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lb_Nome1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lb_Data)
-                            .addComponent(bt_Pesquisar)
-                            .addComponent(tf_Pesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bt_Atualizar))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(pn_ImagemProduto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(pn_ProductImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lb_NomeProduto)
-                            .addComponent(tf_NomeProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lb_ProductValue)
+                            .addComponent(lb_ProductName)
+                            .addComponent(lb_ProductMarca))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lb_MarcaProduto)
-                            .addComponent(tf_MarcaProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lb_ValorProduto)
-                            .addComponent(tf_ValorProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lb_ImagemProduto)
-                            .addComponent(tf_ImagemProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(bt_Salvar)
-                            .addComponent(bt_SelecionarImagem)
-                            .addComponent(bt_Limpar)
-                            .addComponent(bt_Remover))))
+                        .addComponent(sp_Quantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bt_AtualizarTabelaProdutos)
+                    .addComponent(bt_SalvarCarrinho)
+                    .addComponent(lb_ProductName1)
+                    .addComponent(lb_Total)
+                    .addComponent(bt_Limpar)
+                    .addComponent(bt_Remover))
                 .addContainerGap())
         );
 
@@ -625,7 +639,7 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
 
         lb_TelaRotasTitle.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lb_TelaRotasTitle.setForeground(new java.awt.Color(255, 255, 255));
-        lb_TelaRotasTitle.setText("PetShop > Cadastro de Produtos");
+        lb_TelaRotasTitle.setText("PetShop > Carrinho");
 
         lb_ActualUser.setForeground(new java.awt.Color(255, 255, 255));
         lb_ActualUser.setText("<actualUser>");
@@ -682,43 +696,6 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    public void selecionaArquivo(){
-        final JFileChooser fc = new JFileChooser();
-        fc.setDialogType(JFileChooser.OPEN_DIALOG);
-        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        System.out.println("Diretório atual: " + System.getProperty("user.dir"));
-        File initialDir = new File("./");
-        fc.setCurrentDirectory(initialDir);
-        fc.setDialogTitle("Abrir arquivo de texto");
-        int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-
-            String nomeArquivo = file.getName();
-            tf_ImagemProduto.setText(nomeArquivo);
-            
-            String caminhoArquivo = file.getPath();
-            String extensaoArquivo = "";
-
-            int posicaoPonto = nomeArquivo.lastIndexOf(".");
-            if (posicaoPonto >= 0 && posicaoPonto < nomeArquivo.length() - 1) {
-                extensaoArquivo = nomeArquivo.substring(posicaoPonto + 1);
-            }
-            
-            //Processa imagem a ser armazenada na pasta
-            processaImagem(caminhoArquivo, nomeArquivo, extensaoArquivo, 470, 370);
-            //Processa imagem a ser exibida nessa tela
-            processaImagem(caminhoArquivo, "temp." + extensaoArquivo , extensaoArquivo, 470, 300);
-            lb_ProductImagem.setText("");
-            ImageIcon novaImagem = new ImageIcon(".\\images\\temp." + extensaoArquivo);
-            lb_ProductImagem.setIcon(novaImagem);
-        }
-    }
-    
-    public void processaImagem(String imagePath, String imageName, String imageType, int width, int height){
-        image = ImageUpdateService.getInstance();
-        image.ajeitaImagem(imagePath, imageName, imageType, width, height);
-    }
     
     public void atualizaTabela(){
         limpaCampos();
@@ -733,15 +710,6 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
             "R$ " + produto.getValor()
         }); 
         }
-    }
-    
-    public void limpaCampos(){
-        lb_ProductImagem.setIcon(null);
-        lb_ProductImagem.setText("<Product_Image>");
-        tf_NomeProduto.setText("");
-        tf_MarcaProduto.setText("");
-        tf_ValorProduto.setText("");
-        tf_ImagemProduto.setText("");
     }
     
     public void pesquisa(){
@@ -760,149 +728,48 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
         }
     }
     
-    public boolean verificaCamposProduto(){
-        if (tf_NomeProduto.getText().isEmpty()) {
-            ReturnMessagePane.informationPainel("Campo Nome não preenchido.");
-            return false;
-        }
-        if (tf_MarcaProduto.getText().isEmpty()) {
-            ReturnMessagePane.informationPainel("Campo Marca não preenchido.");
-            return false;
-        }
-        if (tf_ValorProduto.getText().isEmpty()) {
-            ReturnMessagePane.informationPainel("Campo Valor não preenchido.");
-            return false;
-        }
-        try {
-            double testeDouble = Double.parseDouble(tf_ValorProduto.getText());
-        } catch (NumberFormatException e) {
-            ReturnMessagePane.informationPainel("O campo Valor deve ser numérico.");
-            return false;
-        }
-        return true;
+    public void limpaCampos(){
+        lb_ProductImage.setIcon(null);
+        lb_ProductImage.setText("<Product_Image>");
+        lb_ProductName.setText("");
+        lb_ProductMarca.setText("");
+        lb_ProductValue.setText("");
+        sp_Quantidade.setValue(0);
+        lb_Total.setText("0.00");
     }
     
     public void preencheProduto(){
-        String nome, marca, imagem, caminhoArquivo, extensaoArquivo;
+        String nome, marca;
         nome = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,0).toString();
         marca = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,1).toString();
         for (Product produto : listaProdutos) {
             if (produto.getNome().equals(nome) && produto.getMarca().equals(marca)) {
-                tf_NomeProduto.setText(produto.getNome());
-                tf_MarcaProduto.setText(produto.getMarca());
-                tf_ValorProduto.setText(Double.toString(produto.getValor()));
+                lb_ProductName.setText(produto.getNome());
+                lb_ProductMarca.setText(produto.getMarca());
+                lb_ProductValue.setText(Double.toString(produto.getValor()));
                 
                 //Processa imagem a ser exibida nessa tela
-                imagem = produto.getImagem();
-                tf_ImagemProduto.setText(imagem);
-                caminhoArquivo = "." + imagem;
-                System.out.println(caminhoArquivo);
-                extensaoArquivo = "";
-                int posicaoPonto = caminhoArquivo.lastIndexOf(".");
-                if (posicaoPonto >= 0 && posicaoPonto < caminhoArquivo.length() - 1) {
-                    extensaoArquivo = caminhoArquivo.substring(posicaoPonto + 1);
-                }
-                processaImagem(caminhoArquivo, "temp." + extensaoArquivo , extensaoArquivo, 470, 300);
-                lb_ProductImagem.setText("");
-                lb_ProductImagem.setIcon(null);
-                lb_ProductImagem.setIcon(new javax.swing.ImageIcon(".\\images\\temp." + extensaoArquivo));
+                lb_ProductImage.setText("");
+                lb_ProductImage.setIcon(null);
+                lb_ProductImage.setIcon(new javax.swing.ImageIcon("." + produto.getImagem()));
             }
         }
     }
     
-    public void editaProduto(Product product){
-        //Faz edição
-        banco.updateProduct(product);
-        atualizaTabela();
-        ReturnMessagePane.informationPainel("Produto editado com sucesso.");
+    public void processaImagem(String imagePath, String imageName, String imageType, int width, int height){
+        image = ImageUpdateService.getInstance();
+        image.ajeitaImagem(imagePath, imageName, imageType, width, height);
     }
     
-    public void processaEditarProduto(){
-        if (tb_Produtos.getSelectedRow() == -1) {
-            ReturnMessagePane.errorPainel("Selecione um produto.");
-        } else {
-            if (verificaCamposProduto()) {
-                //Cria produto editado
-                String nome, marca, imagem, nomeTabela, marcaTabela;
-                double valor;
-                if (tf_ImagemProduto.getText().isEmpty()) {
-                    nome = tf_NomeProduto.getText();
-                    marca = tf_MarcaProduto.getText();
-                    valor = Double.parseDouble(tf_ValorProduto.getText());
-                    imagem = null;
-                } else {
-                    nome = tf_NomeProduto.getText();
-                    marca = tf_MarcaProduto.getText();
-                    valor = Double.parseDouble(tf_ValorProduto.getText());
-                    imagem = "\\images\\" + tf_ImagemProduto.getText();
-                }
-                //Pega o produto selecionado
-                nomeTabela = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,0).toString();
-                marcaTabela = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,1).toString();
-                for (Product produto : listaProdutos) {
-                    if (produto.getNome().equals(nomeTabela) && produto.getMarca().equals(marcaTabela)) {
-                        produto.setNome(nome);
-                        produto.setMarca(marca);
-                        produto.setValor(valor);
-                        produto.setImagem(imagem);
-                        editaProduto(produto);
-                    }
-                }
-            }
-        }
-    }
-    
-    private void removeProduto(Product produto){
-        //Faz remoção
-        banco.deleteProduct(produto);
-        atualizaTabela();
-        ReturnMessagePane.informationPainel("Produto removido com sucesso.");
-    }
-    
-    public void processaRemoverProduto(){
-        if (tb_Produtos.getSelectedRow() == -1) {
-            ReturnMessagePane.errorPainel("Selecione um produto.");
-        } else {
-            String nome, marca;
-            nome = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,0).toString();
-            marca = tb_Produtos.getModel().getValueAt(tb_Produtos.getSelectedRow() ,1).toString();
-            for (Product produto : listaProdutos) {
-                if (produto.getNome().equals(nome) && produto.getMarca().equals(marca)) {
-                    removeProduto(produto);
-                }
-            }
-        }
-    }
-    
-    public void salvaProduto(Product produto){
-        int status = banco.createProduct(produto);
-        if (status == 0) {
-            limpaCampos();
-            atualizaTabela();
-            ReturnMessagePane.informationPainel("Produto salvo com sucesso.");
-        }
-        if (status == -1) {
-            ReturnMessagePane.errorPainel("Produto já cadastrado.");
-        }
-    }
-    
-    public void processaSalvarProduto(){
-        if (verificaCamposProduto()) {
-            String nome, marca, imagem;
-            double valor;
-            if (tf_ImagemProduto.getText().isEmpty()) {
-                nome = tf_NomeProduto.getText();
-                marca = tf_MarcaProduto.getText();
-                valor = Double.parseDouble(tf_ValorProduto.getText());
-                imagem = null;
-            } else {
-                nome = tf_NomeProduto.getText();
-                marca = tf_MarcaProduto.getText();
-                valor = Double.parseDouble(tf_ValorProduto.getText());
-                imagem = "\\images\\" + tf_ImagemProduto.getText();
-            }
-            Product novoProduto = new Product(nome, marca, valor, imagem, new Date());
-            salvaProduto(novoProduto);
+    public void calculaTotal() {
+        if (!lb_ProductValue.getText().equals("")) {
+            int qtde = Integer.parseInt(sp_Quantidade.getValue().toString());
+            double valor = Double.parseDouble(lb_ProductValue.getText());
+            double total = qtde * valor;
+
+            String totalFormatted = String.format("%.2f", total);
+
+            lb_Total.setText(totalFormatted);
         }
     }
     
@@ -910,36 +777,44 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
         // TODO add your handling code here:
         setColor(btn_Home);
         ind_1.setOpaque(true);
-        resetColor(new JPanel[]{btn_JanelaRelatorios,btn_JanelaShopping,btn_4, btn_JanelaSettings}, new JPanel[]{ind_2,ind_3, ind_4, ind_5});
+        resetColor(new JPanel[]{btn_Carrinho,btn_Shopping,btn_4, btn_JanelaSettings}, new JPanel[]{ind_2,ind_3, ind_4, ind_5});
         emObras();
     }//GEN-LAST:event_btn_HomeMousePressed
 
-    private void btn_JanelaRelatoriosMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_JanelaRelatoriosMouseReleased
+    private void btn_CarrinhoMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_CarrinhoMouseReleased
         // TODO add your handling code here:
-        setColor(btn_JanelaRelatorios);
+        setColor(btn_Carrinho);
         ind_2.setOpaque(true);
-        resetColor(new JPanel[]{btn_Home,btn_JanelaShopping,btn_4, btn_JanelaSettings}, new JPanel[]{ind_1,ind_3, ind_4, ind_5});
+        resetColor(new JPanel[]{btn_Home,btn_Shopping,btn_4, btn_JanelaSettings}, new JPanel[]{ind_1,ind_3, ind_4, ind_5});
         emObras();
-    }//GEN-LAST:event_btn_JanelaRelatoriosMouseReleased
+    }//GEN-LAST:event_btn_CarrinhoMouseReleased
 
-    private void btn_JanelaShoppingMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_JanelaShoppingMousePressed
-        naoAcessivelMesage();
-    }//GEN-LAST:event_btn_JanelaShoppingMousePressed
+    private void btn_ShoppingMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_ShoppingMousePressed
+        // TODO add your handling code here:
+        setColor(btn_Shopping);
+        ind_3.setOpaque(true);
+        resetColor(new JPanel[]{btn_Carrinho,btn_Home,btn_4, btn_JanelaSettings}, new JPanel[]{ind_2,ind_1, ind_4, ind_5});
+        try {
+            gotoJanelaShopping();
+        } catch (IOException ex) {
+            Logger.getLogger(JanelaCarrinho.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_ShoppingMousePressed
 
     private void btn_4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_4MousePressed
         // TODO add your handling code here:
         setColor(btn_4);
         ind_4.setOpaque(true);
-        resetColor(new JPanel[]{btn_JanelaRelatorios,btn_JanelaShopping,btn_Home, btn_JanelaSettings}, new JPanel[]{ind_2,ind_3, ind_1, ind_5});
-        emObras();
+        resetColor(new JPanel[]{btn_Carrinho,btn_Shopping,btn_Home, btn_JanelaSettings}, new JPanel[]{ind_2,ind_3, ind_1, ind_5});
+        gotoJanelaAgendaHorario();
     }//GEN-LAST:event_btn_4MousePressed
 
     private void btn_JanelaSettingsMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_JanelaSettingsMouseReleased
         // TODO add your handling code here:
         setColor(btn_JanelaSettings);
         ind_5.setOpaque(true);
-        resetColor(new JPanel[]{btn_Home,btn_JanelaShopping,btn_4, btn_JanelaRelatorios}, new JPanel[]{ind_1,ind_3, ind_4, ind_2});
-        gotoJanelaCadastro(lb_ActualUser.getText());
+        resetColor(new JPanel[]{btn_Home,btn_Shopping,btn_4, btn_Carrinho}, new JPanel[]{ind_1,ind_3, ind_4, ind_2});
+        emObras();
     }//GEN-LAST:event_btn_JanelaSettingsMouseReleased
 
     private void lb_LogoutMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_LogoutMousePressed
@@ -962,17 +837,13 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
         xy = evt.getY();
     }//GEN-LAST:event_jPanel2MousePressed
 
-    private void bt_SelecionarImagemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_SelecionarImagemActionPerformed
-        selecionaArquivo();
-    }//GEN-LAST:event_bt_SelecionarImagemActionPerformed
+    private void bt_SalvarCarrinhoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_SalvarCarrinhoActionPerformed
+        
+    }//GEN-LAST:event_bt_SalvarCarrinhoActionPerformed
 
-    private void bt_LimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_LimparActionPerformed
-        limpaCampos();
-    }//GEN-LAST:event_bt_LimparActionPerformed
-
-    private void bt_AtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_AtualizarActionPerformed
-       atualizaTabela();
-    }//GEN-LAST:event_bt_AtualizarActionPerformed
+    private void bt_AtualizarTabelaProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_AtualizarTabelaProdutosActionPerformed
+        atualizaTabela();
+    }//GEN-LAST:event_bt_AtualizarTabelaProdutosActionPerformed
 
     private void tb_ProdutosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tb_ProdutosKeyReleased
         preencheProduto();
@@ -986,17 +857,21 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
         pesquisa();
     }//GEN-LAST:event_bt_PesquisarActionPerformed
 
-    private void bt_RemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_RemoverActionPerformed
-        processaRemoverProduto();
-    }//GEN-LAST:event_bt_RemoverActionPerformed
+    private void sp_QuantidadeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sp_QuantidadeStateChanged
+        calculaTotal();
+    }//GEN-LAST:event_sp_QuantidadeStateChanged
 
-    private void bt_SalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_SalvarActionPerformed
-        if (tb_Produtos.getSelectedRow() == -1) {
-            processaSalvarProduto();
-        } else {
-            processaEditarProduto();
-        }
-    }//GEN-LAST:event_bt_SalvarActionPerformed
+    private void bt_LimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_LimparActionPerformed
+        limpaCampos();
+    }//GEN-LAST:event_bt_LimparActionPerformed
+
+    private void sp_QuantidadeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_sp_QuantidadeKeyReleased
+        calculaTotal();
+    }//GEN-LAST:event_sp_QuantidadeKeyReleased
+
+    private void bt_RemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_RemoverActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_bt_RemoverActionPerformed
 
     int xx, xy;
         private void setColor(JPanel pane)
@@ -1016,17 +891,16 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton bt_Atualizar;
+    private javax.swing.JButton bt_AtualizarTabelaProdutos;
     private javax.swing.JButton bt_Limpar;
     private javax.swing.JButton bt_Pesquisar;
     private javax.swing.JButton bt_Remover;
-    private javax.swing.JButton bt_Salvar;
-    private javax.swing.JButton bt_SelecionarImagem;
+    private javax.swing.JButton bt_SalvarCarrinho;
     private javax.swing.JPanel btn_4;
+    private javax.swing.JPanel btn_Carrinho;
     private javax.swing.JPanel btn_Home;
-    private javax.swing.JPanel btn_JanelaRelatorios;
     private javax.swing.JPanel btn_JanelaSettings;
-    private javax.swing.JPanel btn_JanelaShopping;
+    private javax.swing.JPanel btn_Shopping;
     private javax.swing.JPanel ind_1;
     private javax.swing.JPanel ind_2;
     private javax.swing.JPanel ind_3;
@@ -1040,27 +914,24 @@ public class JanelaCadastroProdutos extends javax.swing.JPanel {
     private javax.swing.JLabel lb_Agenda;
     private javax.swing.JLabel lb_Carrinho;
     private javax.swing.JLabel lb_DadosProduto;
-    private javax.swing.JLabel lb_Data;
     private javax.swing.JLabel lb_Home;
-    private javax.swing.JLabel lb_ImagemProduto;
     private javax.swing.JLabel lb_Logout;
-    private javax.swing.JLabel lb_MarcaProduto;
-    private javax.swing.JLabel lb_NomeProduto;
-    private javax.swing.JLabel lb_PesquisarProduto;
+    private javax.swing.JLabel lb_Nome;
+    private javax.swing.JLabel lb_Nome1;
     private javax.swing.JLabel lb_ProductImage;
-    private javax.swing.JLabel lb_ProductImagem;
+    private javax.swing.JLabel lb_ProductMarca;
+    private javax.swing.JLabel lb_ProductName;
+    private javax.swing.JLabel lb_ProductName1;
+    private javax.swing.JLabel lb_ProductValue;
+    private javax.swing.JLabel lb_Produtos;
     private javax.swing.JLabel lb_Settings;
     private javax.swing.JLabel lb_Shopping;
     private javax.swing.JLabel lb_TelaRotasTitle;
-    private javax.swing.JLabel lb_ValorProduto;
-    private javax.swing.JPanel pn_ImagemProduto;
+    private javax.swing.JLabel lb_Total;
     private javax.swing.JPanel pn_ProductImage;
     private javax.swing.JPanel side_pane;
+    private javax.swing.JSpinner sp_Quantidade;
     private javax.swing.JTable tb_Produtos;
-    private javax.swing.JTextField tf_ImagemProduto;
-    private javax.swing.JTextField tf_MarcaProduto;
-    private javax.swing.JTextField tf_NomeProduto;
     private javax.swing.JTextField tf_Pesquisar;
-    private javax.swing.JTextField tf_ValorProduto;
     // End of variables declaration//GEN-END:variables
 }
